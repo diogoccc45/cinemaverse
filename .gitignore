@@ -1,0 +1,16 @@
+# dados pessoais — ficam só na minha máquina
+data/
+
+# segredos — a API key nunca vai para o Git
+.env
+secrets.py
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# sistema operativo
+.DS_Store
+Thumbs.db
