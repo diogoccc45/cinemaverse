@@ -14,3 +14,11 @@ venv/
 # sistema operativo
 .DS_Store
 Thumbs.db
+
+# models — too large for GitHub
+models/
+
+# jupyter checkpoints
+.ipynb_checkpoints/
+scripts/.ipynb_checkpoints/
+notebooks/.ipynb_checkpoints/
