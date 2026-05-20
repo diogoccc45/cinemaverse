@@ -5,10 +5,10 @@ Análise do meu perfil Letterboxd combinando ciência de dados, ciência de rede
 ## roadmap
 
 - [x] Passo 1 — explorar o dataset raw
-- [ ] Passo 2 — activar e testar a API do TMDb
-- [ ] Passo 3 — enriquecer os 768 filmes com metadados
-- [ ] Passo 4 — análise exploratória com os novos dados
-- [ ] Passo 5 — ciência de redes (grafo de actores)
+- [x] Passo 2 — activar e testar a API do TMDb
+- [x] Passo 3 — enriquecer os 768 filmes com metadados
+- [x] Passo 4 — análise exploratória com os novos dados
+- [x] Passo 5 — ciência de redes (grafo de actores)
 - [ ] Passo 6 — machine learning (embeddings + clusters)
 - [ ] Passo 7 — dashboard final interactiva
 
