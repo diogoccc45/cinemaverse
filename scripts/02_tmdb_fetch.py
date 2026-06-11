@@ -1,13 +1,12 @@
 """
-SCRIPT 02 - Fetch TMDb metadata for all films
-==============================================
-For each film in ratings.csv, this script:
-  1. Searches TMDb by title + year to get the TMDb ID
-  2. Fetches full details: genres, director, cast, country, runtime
+SCRIPT 02b - Fetch TMDb metadata for watchlist
+===============================================
+Same pipeline as 02, but runs over watchlist.csv instead of ratings.csv.
+Fetches genres, director, cast, country, runtime for all 248 watchlist films.
 
-Results are saved to data/processed/movies_enriched.csv
+Results are saved to data/processed/watchlist_enriched.csv
 
-Progress is cached in data/processed/tmdb_cache.json so if the script stops halfway, it picks up where it left off.
+Progress is cached in data/processed/watchlist_cache.json.
 """
 
 import sys
@@ -30,8 +29,8 @@ RAW_DIR    = os.path.join(ROOT_DIR, 'data', 'raw')
 OUT_DIR    = os.path.join(ROOT_DIR, 'data', 'processed')
 os.makedirs(OUT_DIR, exist_ok=True)
 
-CACHE_FILE  = os.path.join(OUT_DIR, 'tmdb_cache.json')
-OUTPUT_FILE = os.path.join(OUT_DIR, 'movies_enriched.csv')
+CACHE_FILE  = os.path.join(OUT_DIR, 'watchlist_cache.json')
+OUTPUT_FILE = os.path.join(OUT_DIR, 'watchlist_enriched.csv')
 
 # API KEY - reads from .env file
 env_path = os.path.join(ROOT_DIR, '.env')
@@ -160,11 +159,11 @@ def main():
     else:
         print("No cache found - starting fresh.")
 
-    # Load ratings (our list of films to enrich)
-    ratings = pd.read_csv(os.path.join(RAW_DIR, 'ratings.csv'))
+    # Load watchlist
+    ratings = pd.read_csv(os.path.join(RAW_DIR, 'watchlist.csv'))
     total = len(ratings)
-    print(f"Films to process: {total}")
-    print(f"Remaining:        {total - len(cache)}")
+    print(f"Watchlist films to process: {total}")
+    print(f"Remaining:                  {total - len(cache)}")
     print()
 
     results = []
@@ -172,7 +171,8 @@ def main():
 
     for i, row in ratings.iterrows():
         title = row['Name']
-        year  = int(row['Year'])
+        year_raw = row.get('Year', 2000)
+        year = int(year_raw) if year_raw and str(year_raw) != 'nan' else 2000
         key   = f"{title}_{year}"  # unique cache key
 
         # Already in cache? Skip the API call
@@ -222,7 +222,7 @@ def main():
     print()
     print("=" * 50)
     print(f"  DONE!")
-    print(f"  {len(results)} films saved to data/processed/movies_enriched.csv")
+    print(f"  {len(results)} films saved to data/processed/watchlist_enriched.csv")
     if not_found:
         print(f"  {len(not_found)} films not found on TMDb:")
         for f in not_found:
