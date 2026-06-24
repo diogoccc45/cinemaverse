@@ -764,28 +764,34 @@ elif section == "Reviews":
     <div class="section-sub">✎ REVIEWS // {data['stats']['total_reviews']} REVIEWS WRITTEN IN PT & EN</div>
     """, unsafe_allow_html=True)
 
-    if not reviews_df.empty:
+    tab1, tab2, tab3 = st.tabs(["ALL REVIEWS", "STATS", "GENERATE WITH AI"])
+
+    # ── TAB 1: All reviews with filters ──
+    with tab1:
         col1, col2, col3 = st.columns(3)
         with col1:
             min_rating = st.slider("Min rating", 0.5, 5.0, 3.5, 0.5)
         with col2:
             min_length = st.slider("Min length (chars)", 0, 500, 80, 40)
         with col3:
-            search_r = st.text_input("", placeholder="Search in text...", label_visibility="collapsed")
+            search_r = st.text_input("", placeholder="Search in text...",
+                                     label_visibility="collapsed")
 
         filtered = reviews_df.copy()
         if 'Rating' in filtered.columns:
             filtered = filtered[filtered['Rating'] >= min_rating]
         filtered = filtered[filtered['review_length'] >= min_length]
         if search_r:
-            filtered = filtered[filtered['Review'].str.contains(search_r, case=False, na=False)]
+            filtered = filtered[
+                filtered['Review'].str.contains(search_r, case=False, na=False)
+            ]
 
-        st.caption(f"{len(filtered)} reviews match")
+        st.caption(f"{len(filtered)} reviews match · showing first 15")
 
-        for _, row in filtered.head(12).iterrows():
-            rating = row.get('Rating')
-            stars  = '★' * int(rating) + ('½' if rating % 1 >= 0.5 else '') if pd.notna(rating) else ''
-            preview = str(row['Review'])[:350] + ('...' if len(str(row['Review'])) > 350 else '')
+        for _, row in filtered.head(15).iterrows():
+            rating  = row.get('Rating')
+            stars   = '★' * int(rating) + ('½' if rating % 1 >= 0.5 else '') if pd.notna(rating) else ''
+            preview = str(row['Review'])[:400] + ('...' if len(str(row['Review'])) > 400 else '')
             st.markdown(f"""
             <div class="film-card">
                 <div style="display:flex; justify-content:space-between; align-items:baseline;">
@@ -796,5 +802,178 @@ elif section == "Reviews":
                             line-height:1.65; font-style:italic;">"{preview}"</div>
             </div>
             """, unsafe_allow_html=True)
-    else:
-        st.info("No reviews data found.")
+
+    # ── TAB 2: Review stats ──
+    with tab2:
+        if not reviews_df.empty:
+            col1, col2, col3 = st.columns(3)
+            col1.metric("Total reviews", len(reviews_df))
+            col2.metric("Avg length", f"{reviews_df['review_length'].mean():.0f} chars")
+            col3.metric("Longest review", f"{reviews_df['review_length'].max()} chars")
+
+            st.divider()
+
+            # Review length distribution
+            fig = go.Figure(go.Histogram(
+                x=reviews_df['review_length'],
+                nbinsx=30,
+                marker_color=TEAL,
+                hovertemplate='Length: %{x}<br>Count: %{y}<extra></extra>'
+            ))
+            fig.update_layout(**plotly_layout(
+                title='Review length distribution (characters)',
+                height=300, showlegend=False
+            ))
+            fig.update_xaxes(title='Characters')
+            fig.update_yaxes(title='Reviews')
+            st.plotly_chart(fig, use_container_width=True)
+
+            # Top 5 longest reviews
+            st.subheader("My longest reviews")
+            top_long = reviews_df.nlargest(5, 'review_length')[['Name', 'Year', 'Rating', 'review_length']]
+            for _, row in top_long.iterrows():
+                rating = row.get('Rating')
+                stars  = '★' * int(rating) + ('½' if rating % 1 >= 0.5 else '') if pd.notna(rating) else ''
+                st.markdown(f"""
+                <div class="film-card">
+                    <div class="film-card-title">{row['Name']} ({int(row['Year'])})
+                        <span class="film-card-rating"> {stars}</span>
+                    </div>
+                    <div class="film-card-meta">{int(row['review_length'])} characters</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+    # ── TAB 3: Generate review with GPT-2 ──
+    with tab3:
+        st.markdown("""
+        <div style="font-size:13px; color:#666680; margin-bottom:16px; line-height:1.6;">
+        This generator uses <b style="color:#9999b8;">DistilGPT-2</b> fine-tuned on my 417 Letterboxd reviews.
+        Before generating, it's important to understand what this model actually learned — and what it didn't.
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.warning("⚠️  This is a creative experiment with known limitations — read below before generating.")
+
+        with st.expander("Understanding the model's limitations", expanded=True):
+            st.markdown("""
+**What fine-tuning actually does**
+
+Fine-tuning a language model on your reviews does *not* teach it about films. It teaches it to imitate
+your writing patterns — your sentence structures, your vocabulary, your rhythm. Think of it as training
+a parrot to speak in your accent, not to understand what it's saying.
+
+---
+
+**Why the output may be factually wrong**
+
+The model has zero factual knowledge about any film. It doesn't know who directed Nosferatu, who acts in it,
+or whether it's from 1922 or 2024. When it mentions an actor or a plot detail, it's making a statistically
+plausible guess based on words that often appeared together in my reviews — not recalling real information.
+This is called **hallucination**, and it's a fundamental limitation of generative language models
+when used without grounding in real data.
+
+---
+
+**Why 417 reviews isn't enough**
+
+GPT-2 was pre-trained on billions of words. Fine-tuning it on 417 reviews is like teaching a concert
+pianist one new song — the underlying technique changes very little. The model will largely default to
+general English patterns with a thin veneer of my style on top. A dataset of tens of thousands of reviews
+would be needed to meaningfully shift the model's behaviour.
+
+---
+
+**Why mixing Portuguese and English hurts quality**
+
+My reviews are written in both languages. The model learned from this mixed signal, which means it
+sometimes switches languages mid-sentence or produces incoherent text when the two languages conflict
+in its internal representations.
+
+---
+
+**What the model actually does well**
+
+Despite these limitations, the experiment is genuinely interesting:
+- It captures the **general tone** of my reviews — more analytical for high ratings, more dismissive for low ones
+- It tends to use **cinematic vocabulary** similar to mine
+- It reflects the **emotional register** I use (the 5★ outputs feel different from the 0.5★ ones)
+- It's a real demonstration of **NLP fine-tuning** on a personal dataset
+
+Treat the output as a creative experiment in machine learning — not as a real review.
+            """)
+
+        st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
+
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            film_input  = st.text_input("Film title", placeholder="e.g. Nosferatu")
+        with col2:
+            year_input  = st.number_input("Year", min_value=1900, max_value=2030,
+                                          value=2024, step=1)
+        with col3:
+            rating_input = st.select_slider(
+                "Rating", options=[0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0], value=4.0
+            )
+
+        temp = st.slider("Creativity (temperature)", 0.5, 1.2, 0.8, 0.05,
+                         help="Lower = more predictable, Higher = more creative")
+
+        if st.button("Generate review", type="primary"):
+            if not film_input:
+                st.warning("Please enter a film title.")
+            else:
+                with st.spinner("Loading model and generating review..."):
+                    try:
+                        from transformers import GPT2Tokenizer, GPT2LMHeadModel
+                        import torch
+
+                        @st.cache_resource
+                        def load_gpt2():
+                            tok = GPT2Tokenizer.from_pretrained("diogocc45/letterboxd-gpt2")
+                            mod = GPT2LMHeadModel.from_pretrained("diogocc45/letterboxd-gpt2")
+                            mod.eval()
+                            return tok, mod
+
+                        tokenizer, model = load_gpt2()
+
+                        prompt = (f"<|film|> {film_input} ({int(year_input)}) "
+                                  f"<|rating|> {rating_input:.1f} <|review|>")
+
+                        inputs = tokenizer.encode(prompt, return_tensors='pt')
+                        with torch.no_grad():
+                            outputs = model.generate(
+                                inputs,
+                                max_length=250,
+                                temperature=temp,
+                                do_sample=True,
+                                top_k=50,
+                                top_p=0.95,
+                                repetition_penalty=1.2,
+                                pad_token_id=tokenizer.pad_token_id,
+                                eos_token_id=tokenizer.eos_token_id,
+                            )
+
+                        generated = tokenizer.decode(outputs[0], skip_special_tokens=False)
+                        if '<|review|>' in generated:
+                            review_text = generated.split('<|review|>')[1]
+                            review_text = review_text.replace('<|endoftext|>', '').strip()
+                        else:
+                            review_text = generated
+
+                        stars = '★' * int(rating_input) + ('½' if rating_input % 1 >= 0.5 else '')
+                        st.markdown(f"""
+                        <div class="film-card">
+                            <div style="display:flex; justify-content:space-between;">
+                                <div class="film-card-title">{film_input} ({int(year_input)})</div>
+                                <div class="film-card-rating">{stars}</div>
+                            </div>
+                            <div style="font-family:'DM Mono',monospace; font-size:9px;
+                                        color:#333350; margin: 4px 0 10px;
+                                        letter-spacing:0.1em;">AI-GENERATED IN MY STYLE</div>
+                            <div style="font-size:13px; color:#9999b8; line-height:1.65;
+                                        font-style:italic;">"{review_text}"</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+
+                    except Exception as e:
+                        st.error(f"Error loading model: {e}")
