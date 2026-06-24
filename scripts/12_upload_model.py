@@ -13,7 +13,7 @@ from huggingface_hub import HfApi, login
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR   = os.path.join(SCRIPT_DIR, '..')
 MODEL_DIR  = os.path.join(ROOT_DIR, 'models', 'letterboxd_gpt2')
-HF_REPO    = "diogocc/letterboxd-gpt2"
+HF_REPO    = "diogocc45/letterboxd-gpt2"
 
 # Token comes from environment variable — never hardcoded
 HF_TOKEN = os.environ.get("HF_TOKEN")
