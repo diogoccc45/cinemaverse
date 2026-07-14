@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>cinemaverse — diogocc</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:   #e8c96a;
+      --green:  #00c030;
+      --teal:   #00ccaa;
+      --purple: #9966ff;
+      --bg:     #0a0a0f;
+      --bg2:    #111118;
+      --border: #1e1e2e;
+      --muted:  #444460;
+      --text:   #e8e8f0;
+      --sub:    #666680;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px;
+      height: 56px;
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--gold);
+      text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 32px; }
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 24px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 60%, rgba(232,201,106,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(56px, 8vw, 100px);
+      font-weight: 900;
+      line-height: 1.0;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--gold);
+    }
+    .hero-sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      color: var(--sub);
+      margin-top: 20px;
+      margin-bottom: 48px;
+      letter-spacing: 0.05em;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 32px;
+      background: var(--gold);
+      color: #0a0a0f;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .hero-cta:hover { opacity: 0.9; transform: translateY(-1px); }
+    .hero-cta-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 32px;
+      background: transparent;
+      color: var(--sub);
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      margin-left: 16px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .hero-cta-ghost:hover { border-color: var(--muted); color: var(--text); }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+    }
+    .stat-item {
+      flex: 1; max-width: 200px;
+      padding: 32px 24px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--gold);
+      display: block;
+    }
+    .stat-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 4px;
+      display: block;
+    }
+
+    /* ── SECTIONS ── */
+    section { padding: 96px 24px; max-width: 1200px; margin: 0 auto; }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    .section-title em { font-style: italic; color: var(--gold); }
+    .section-desc {
+      font-size: 16px;
+      color: var(--sub);
+      max-width: 600px;
+      line-height: 1.7;
+      margin-bottom: 48px;
+    }
+
+    /* ── FEATURES GRID ── */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .feature {
+      background: var(--bg2);
+      padding: 32px;
+      transition: background 0.2s;
+    }
+    .feature:hover { background: #13131f; }
+    .feature-icon {
+      font-size: 24px;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .feature-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .feature-desc {
+      font-size: 14px;
+      color: var(--sub);
+      line-height: 1.6;
+    }
+
+    /* ── GALLERY ── */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 12px;
+    }
+    .gallery-item {
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--bg2);
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease, opacity 0.3s;
+      opacity: 0.9;
+    }
+    .gallery-item:hover img { transform: scale(1.02); opacity: 1; }
+    .g-wide  { grid-column: span 7; }
+    .g-half  { grid-column: span 5; }
+    .g-third { grid-column: span 4; }
+    .g-full  { grid-column: span 12; }
+
+    /* ── STACK ── */
+    .stack-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .stack-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--sub);
+      letter-spacing: 0.05em;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .stack-tag:hover { border-color: var(--gold); color: var(--gold); }
+    .stack-tag.highlight { border-color: var(--teal); color: var(--teal); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-left {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">cinemaverse</a>
+  <div class="nav-links">
+    <a href="#features">features</a>
+    <a href="#gallery">gallery</a>
+    <a href="#stack">stack</a>
+    <a href="https://github.com/diogocc45/cinemaverse">github</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <p class="hero-eyebrow">diogocc · letterboxd data science</p>
+  <h1 class="hero-title">cinema<em>verse</em></h1>
+  <p class="hero-sub">
+    network science · machine learning · nlp · built from my letterboxd history
+  </p>
+  <div>
+    <a href="https://cinemaverse.streamlit.app" class="hero-cta" target="_blank">
+      open dashboard →
+    </a>
+    <a href="https://github.com/diogocc45/cinemaverse" class="hero-cta-ghost" target="_blank">
+      view on github
+    </a>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <span class="stat-value">778</span>
+    <span class="stat-label">films watched</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-value">3.34</span>
+    <span class="stat-label">avg rating</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-value">428</span>
+    <span class="stat-label">reviews written</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-value">12</span>
+    <span class="stat-label">curated lists</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-value">20+</span>
+    <span class="stat-label">directors deep-dived</span>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FEATURES -->
+<section id="features">
+  <p class="section-label">what it does</p>
+  <h2 class="section-title">A data science project<br><em>about cinema.</em></h2>
+  <p class="section-desc">
+    Built from a raw Letterboxd export, enriched with TMDb metadata,
+    and analysed through the lens of network science, ML and NLP.
+  </p>
+
+  <div class="features">
+    <div class="feature">
+      <span class="feature-icon">◈</span>
+      <div class="feature-title">Exploration</div>
+      <div class="feature-desc">Genre profiles, director bubbles, actor rankings, production company analysis and me vs the crowd.</div>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">⬡</span>
+      <div class="feature-title">Network Science</div>
+      <div class="feature-desc">Film graph built from shared actors and directors. Louvain community detection. Comparison with Erdős–Rényi, Barabási–Albert and Watts–Strogatz models.</div>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">✦</span>
+      <div class="feature-title">Film Galaxy</div>
+      <div class="feature-desc">Every film projected into 2D via UMAP + HDBSCAN clustering. Coloured by rating, cluster or decade. Hover for details.</div>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">→</span>
+      <div class="feature-title">Recommendations</div>
+      <div class="feature-desc">Cosine similarity and semantic embeddings via sentence-transformers to rank my watchlist and surface new discoveries.</div>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">◎</span>
+      <div class="feature-title">Rating Prediction</div>
+      <div class="feature-desc">Random Forest trained on my ratings with weighted director, genre and franchise features. Solves cold-start via synopsis embeddings.</div>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">✎</span>
+      <div class="feature-title">AI Reviews</div>
+      <div class="feature-desc">DistilGPT-2 fine-tuned on 417 of my Letterboxd reviews. Generates new reviews in my writing style — with honest caveats about its limitations.</div>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">◉</span>
+      <div class="feature-title">Director Deep-Dive</div>
+      <div class="feature-desc">Per-director profile with photo, bio, film grid, rating timeline, word cloud of my reviews and head-to-head comparison between directors.</div>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">▤</span>
+      <div class="feature-title">Lists</div>
+      <div class="feature-desc">My curated Letterboxd lists with TMDb poster art, ratings and full reviews accessible in a scrollable grid.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <p class="section-label">gallery</p>
+  <h2 class="section-title">Some of the<br><em>visualisations.</em></h2>
+  <p class="section-desc">
+    All charts generated with matplotlib and Plotly from my personal data.
+  </p>
+
+  <div class="gallery">
+    <div class="gallery-item g-wide" style="height:320px">
+      <img src="images/04_overview.png" alt="Overview stats" loading="lazy"/>
+    </div>
+    <div class="gallery-item g-half" style="height:320px">
+      <img src="images/06_directors.png" alt="Director bubble chart" loading="lazy"/>
+    </div>
+    <div class="gallery-item g-full" style="height:380px">
+      <img src="images/02_activity_over_time.png" alt="Viewing activity over time" loading="lazy"/>
+    </div>
+    <div class="gallery-item g-half" style="height:340px">
+      <img src="images/19_network_visualisation.png" alt="Film network" loading="lazy"/>
+    </div>
+    <div class="gallery-item g-half" style="height:340px">
+      <img src="images/26_topology_comparison.png" alt="Network topology comparison" loading="lazy"/>
+    </div>
+    <div class="gallery-item g-half" style="height:300px">
+      <img src="images/25_loglog_comparison.png" alt="Log-log degree distribution" loading="lazy"/>
+    </div>
+    <div class="gallery-item g-half" style="height:300px">
+      <img src="images/35_semantic_recommendations.png" alt="Semantic recommendations" loading="lazy"/>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- STACK -->
+<section id="stack">
+  <p class="section-label">tech stack</p>
+  <h2 class="section-title">Built with<br><em>Python.</em></h2>
+  <p class="section-desc">
+    Every component from data fetching to the dashboard is Python,
+    with a few carefully chosen libraries.
+  </p>
+
+  <div class="stack-grid">
+    <span class="stack-tag highlight">Python</span>
+    <span class="stack-tag highlight">Streamlit</span>
+    <span class="stack-tag highlight">Plotly</span>
+    <span class="stack-tag">pandas</span>
+    <span class="stack-tag">NetworkX</span>
+    <span class="stack-tag">UMAP</span>
+    <span class="stack-tag">HDBSCAN</span>
+    <span class="stack-tag">scikit-learn</span>
+    <span class="stack-tag">sentence-transformers</span>
+    <span class="stack-tag">transformers</span>
+    <span class="stack-tag">DistilGPT-2</span>
+    <span class="stack-tag">matplotlib</span>
+    <span class="stack-tag">wordcloud</span>
+    <span class="stack-tag">TMDb API</span>
+    <span class="stack-tag">Letterboxd export</span>
+    <span class="stack-tag">Hugging Face Hub</span>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    cinemaverse · diogocc · 2026
+  </div>
+  <div class="footer-links">
+    <a href="https://letterboxd.com/diogocc" target="_blank">letterboxd</a>
+    <a href="https://github.com/diogocc45/cinemaverse" target="_blank">github</a>
+    <a href="https://huggingface.co/diogocc45/letterboxd-gpt2" target="_blank">hugging face</a>
+    <a href="https://cinemaverse.streamlit.app" target="_blank">dashboard</a>
+  </div>
+</footer>
+
+</body>
+</html>
