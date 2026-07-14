@@ -155,8 +155,8 @@ section = st.session_state['section']
 # ─────────────────────────────────────────────────────────────
 if section == "Overview":
     s = data['stats']
-    st.markdown("""
-    <div class="section-title">768 films.<br><em>A life</em> watching.</div>
+    st.markdown(f"""
+    <div class="section-title">{s['total_watched']} films.<br><em>A life</em> watching.</div>
     <div class="section-sub">◈ OVERVIEW // EVERY FILM I'VE WATCHED — IN NUMBERS</div>
     """, unsafe_allow_html=True)
 
@@ -167,7 +167,7 @@ if section == "Overview":
     c4.metric("0.5-star",   s['half_star_count'])
     c5.metric("Reviews",    s['total_reviews'])
     c6.metric("Watchlist",  s['watchlist_count'])
-    c7.metric("Years",      f"{s['first_log'][:4]}–{s['last_log'][:4]}")
+    c7.metric("Active since", s['first_log'][:4])
 
     st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
     col1, col2 = st.columns(2)
@@ -793,7 +793,7 @@ elif section == "Reviews":
         for _, row in filtered.head(15).iterrows():
             rating  = row.get('Rating')
             stars   = '★' * int(rating) + ('½' if rating % 1 >= 0.5 else '') if pd.notna(rating) else ''
-            preview = str(row['Review'])
+            preview = str(row['Review'])[:400] + ('...' if len(str(row['Review'])) > 400 else '')
             st.markdown(f"""
             <div class="film-card">
                 <div style="display:flex; justify-content:space-between; align-items:baseline;">
@@ -1356,3 +1356,177 @@ elif section == "Directors":
                             <div style="font-family:'DM Mono',monospace; font-size:8px;
                                         color:#444460;">{short}</div>
                         </div>""", unsafe_allow_html=True)
+
+        st.divider()
+
+        # ── Word Cloud of reviews ──
+        all_reviews_text = ' '.join([
+            f.get('review', '') or ''
+            for f in films
+            if f.get('review')
+        ])
+
+        if all_reviews_text.strip():
+            st.markdown("""
+            <div style="font-family:'DM Mono',monospace; font-size:10px;
+                        color:#444460; letter-spacing:0.12em; margin-bottom:12px;">
+                WORD CLOUD — MY REVIEWS ABOUT THIS DIRECTOR
+            </div>""", unsafe_allow_html=True)
+
+            try:
+                from wordcloud import WordCloud
+                import matplotlib.pyplot as plt
+                import io as _io
+
+                # Custom stopwords
+                stopwords = {
+                    'the','a','an','and','or','but','in','on','at','to','for',
+                    'of','with','is','it','as','this','that','was','are','be',
+                    'have','has','had','not','do','did','i','my','me','he','she',
+                    'his','her','its','we','they','their','our','film','movie',
+                    'one','just','more','also','so','very','much','even','from',
+                    'um','uma','que','de','em','para','com','não','se','por',
+                    'o','a','os','as','e','é','no','na','ao','da','do','dos',
+                    'das','mas','seu','sua','ele','ela','eles','isso','este'
+                }
+
+                wc = WordCloud(
+                    width=900, height=400,
+                    background_color='#111118',
+                    colormap='YlOrRd',
+                    stopwords=stopwords,
+                    max_words=80,
+                    prefer_horizontal=0.8,
+                    min_font_size=10,
+                    font_step=1,
+                    random_state=42,
+                ).generate(all_reviews_text)
+
+                fig, ax = plt.subplots(figsize=(12, 5))
+                fig.patch.set_facecolor('#111118')
+                ax.imshow(wc, interpolation='bilinear')
+                ax.axis('off')
+                plt.tight_layout(pad=0)
+
+                buf = _io.BytesIO()
+                plt.savefig(buf, format='png', dpi=150,
+                            bbox_inches='tight', facecolor='#111118')
+                buf.seek(0)
+                plt.close()
+                st.image(buf, use_container_width=True)
+
+            except Exception as e:
+                st.warning(f"Could not generate word cloud: {e}")
+        else:
+            st.info("No reviews written for this director's films.")
+
+        st.divider()
+
+        # ── Compare two directors ──
+        st.markdown("""
+        <div style="font-family:'DM Mono',monospace; font-size:10px;
+                    color:#444460; letter-spacing:0.12em; margin-bottom:12px;">
+            COMPARE WITH ANOTHER DIRECTOR
+        </div>""", unsafe_allow_html=True)
+
+        other_dirs = [d for d in dir_names if d != selected_dir]
+        compare_dir = st.selectbox("Compare with", other_dirs, key="compare_dir_select")
+
+        if compare_dir and compare_dir in directors_deep:
+            d2 = directors_deep[compare_dir]
+            films2 = d2.get('films', [])
+
+            col_a, col_mid, col_b = st.columns([2, 1, 2])
+
+            def dir_stats_block(director_name, director_data, director_films, align='left'):
+                avg    = director_data.get('avg_rating', 0)
+                cnt    = len(director_films)
+                rated  = [f['rating'] for f in director_films if f.get('rating')]
+                best   = max(director_films, key=lambda f: f.get('rating') or 0, default={})
+                worst  = min(director_films, key=lambda f: f.get('rating') or 5, default={})
+
+                text_align = 'right' if align == 'left' else 'left'
+                return f"""
+                <div style="text-align:{text_align};">
+                    <div style="font-family:'Playfair Display',serif; font-size:20px;
+                                font-weight:700; color:#e8e8f0; margin-bottom:8px;">
+                        {director_name}
+                    </div>
+                    <div style="font-family:'DM Mono',monospace; font-size:11px;
+                                color:#444460; margin-bottom:4px;">
+                        {cnt} films watched
+                    </div>
+                    <div style="font-size:22px; color:#e8c96a; margin-bottom:8px;">
+                        {'★' * int(avg)}{'½' if avg % 1 >= 0.5 else ''}
+                        <span style="font-size:13px; color:#666680;"> {avg:.2f}</span>
+                    </div>
+                    <div style="font-family:'DM Mono',monospace; font-size:10px; color:#666680;">
+                        BEST: {best.get('name','—')} ({'★'*int(best.get('rating',0)) if best.get('rating') else '—'})<br>
+                        WORST: {worst.get('name','—')} ({'★'*int(worst.get('rating',0)) if worst.get('rating') else '—'})
+                    </div>
+                </div>"""
+
+            with col_a:
+                st.markdown(dir_stats_block(selected_dir, d, films, 'left'),
+                            unsafe_allow_html=True)
+                if d.get('photo'):
+                    st.markdown(f"""
+                    <div style="text-align:right; margin-top:12px;">
+                        <img src="{d['photo']}" style="width:80%; border-radius:8px;
+                                   border:1px solid #1e1e2e;"/>
+                    </div>""", unsafe_allow_html=True)
+
+            with col_mid:
+                avg1 = d.get('avg_rating', 0)
+                avg2 = d2.get('avg_rating', 0)
+                winner = selected_dir if avg1 > avg2 else compare_dir
+                st.markdown(f"""
+                <div style="text-align:center; padding-top:20px;">
+                    <div style="font-family:'DM Mono',monospace; font-size:9px;
+                                color:#333350; letter-spacing:0.1em; margin-bottom:8px;">
+                        VS
+                    </div>
+                    <div style="font-family:'DM Mono',monospace; font-size:9px;
+                                color:#444460; margin-top:16px;">
+                        I prefer<br>
+                        <span style="color:#e8c96a; font-size:11px;">{winner}</span>
+                    </div>
+                    <div style="font-family:'DM Mono',monospace; font-size:9px;
+                                color:#333350; margin-top:8px;">
+                        by {abs(avg1-avg2):.2f}★
+                    </div>
+                </div>""", unsafe_allow_html=True)
+
+            with col_b:
+                st.markdown(dir_stats_block(compare_dir, d2, films2, 'right'),
+                            unsafe_allow_html=True)
+                if d2.get('photo'):
+                    st.markdown(f"""
+                    <div style="text-align:left; margin-top:12px;">
+                        <img src="{d2['photo']}" style="width:80%; border-radius:8px;
+                                   border:1px solid #1e1e2e;"/>
+                    </div>""", unsafe_allow_html=True)
+
+            st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)
+
+            # Rating comparison chart
+            ratings1 = sorted([f['rating'] for f in films if f.get('rating')])
+            ratings2 = sorted([f['rating'] for f in films2 if f.get('rating')])
+
+            fig = go.Figure()
+            fig.add_trace(go.Box(
+                y=ratings1, name=selected_dir,
+                marker_color=GOLD, line_color=GOLD,
+                fillcolor='rgba(232,201,106,0.15)',
+            ))
+            fig.add_trace(go.Box(
+                y=ratings2, name=compare_dir,
+                marker_color=TEAL, line_color=TEAL,
+                fillcolor='rgba(0,204,170,0.15)',
+            ))
+            fig.update_layout(**plotly_layout(
+                title='Rating distribution comparison',
+                height=320, showlegend=True
+            ))
+            fig.update_yaxes(range=[0, 5.5], title='Rating')
+            st.plotly_chart(fig, use_container_width=True)

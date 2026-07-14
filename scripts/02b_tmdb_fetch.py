@@ -1,13 +1,12 @@
 """
-SCRIPT 02 - Fetch TMDb metadata for all films
-==============================================
-For each film in ratings.csv, this script:
-  1. Searches TMDb by title + year to get the TMDb ID
-  2. Fetches full details: genres, director, cast, country, runtime
+SCRIPT 02b - Fetch TMDb metadata for watchlist
+===============================================
+Same pipeline as 02, but runs over watchlist.csv instead of ratings.csv.
+Fetches genres, director, cast, country, runtime for all 248 watchlist films.
 
-Results are saved to data/processed/movies_enriched.csv
+Results are saved to data/processed/watchlist_enriched.csv
 
-Progress is cached in data/processed/tmdb_cache.json so if the script stops halfway, it picks up where it left off.
+Progress is cached in data/processed/watchlist_cache.json.
 """
 
 import sys
@@ -30,8 +29,8 @@ RAW_DIR    = os.path.join(ROOT_DIR, 'data', 'raw')
 OUT_DIR    = os.path.join(ROOT_DIR, 'data', 'processed')
 os.makedirs(OUT_DIR, exist_ok=True)
 
-CACHE_FILE  = os.path.join(OUT_DIR, 'tmdb_cache.json')
-OUTPUT_FILE = os.path.join(OUT_DIR, 'movies_enriched.csv')
+CACHE_FILE  = os.path.join(OUT_DIR, 'watchlist_cache.json')
+OUTPUT_FILE = os.path.join(OUT_DIR, 'watchlist_enriched.csv')
 
 # API KEY - reads from .env file
 env_path = os.path.join(ROOT_DIR, '.env')
@@ -75,40 +74,35 @@ def api_get(endpoint, params={}):
 
 def search_movie(title, year):
     """
-    Searches TMDb for a title by title + year.
-    Tries movie first, then TV (for specials, series, etc.)
-    Returns (tmdb_id, media_type) or (None, None) if not found.
+    Searches TMDb for a film by title + year.
+    Returns the TMDb ID (integer) or None if not found.
+
+    Why two attempts?
+    Some films aren't found with year filter (e.g. release date
+    differences between countries), so we retry without year.
     """
-    # Attempt 1: movie with year
+    # Attempt 1: with year filter
     result = api_get('/search/movie', {'query': title, 'year': year, 'language': 'en-US'})
     if result and result.get('results'):
-        return result['results'][0]['id'], 'movie'
+        return result['results'][0]['id']
 
-    # Attempt 2: movie without year
+    # Attempt 2: without year filter (broader search)
     result = api_get('/search/movie', {'query': title, 'language': 'en-US'})
     if result and result.get('results'):
-        return result['results'][0]['id'], 'movie'
+        return result['results'][0]['id']
 
-    # Attempt 3: TV (specials, series, stand-up, documentaries)
-    result = api_get('/search/tv', {'query': title, 'first_air_date_year': year, 'language': 'en-US'})
-    if result and result.get('results'):
-        return result['results'][0]['id'], 'tv'
-
-    # Attempt 4: TV without year
-    result = api_get('/search/tv', {'query': title, 'language': 'en-US'})
-    if result and result.get('results'):
-        return result['results'][0]['id'], 'tv'
-
-    return None, None
+    return None
 
 
-def get_movie_details(tmdb_id, media_type='movie'):
+def get_movie_details(tmdb_id):
     """
-    Fetches full details for a film or TV show using its TMDb ID.
-    Handles both /movie/ and /tv/ endpoints.
+    Fetches full details for a film using its TMDb ID.
+
+    append_to_response=credits means we get cast + crew in the
+    same API call instead of making a separate request.
+    This halves the number of API calls needed. I hope.
     """
-    endpoint = f'/{media_type}/{tmdb_id}'
-    result = api_get(endpoint, {
+    result = api_get(f'/movie/{tmdb_id}', {
         'append_to_response': 'credits',
         'language': 'en-US'
     })
@@ -120,14 +114,12 @@ def get_movie_details(tmdb_id, media_type='movie'):
     # e.g. "Drama|Crime|Thriller"
     genres = '|'.join(g['name'] for g in result.get('genres', []))
 
-    # Extract director(s) from crew — works for both movie and TV
-    crew = result.get('credits', {}).get('crew', [])
+    # Extract director(s) from the crew list
+    # crew is a list of people, each with a 'job' field
     directors = '|'.join(
-        p['name'] for p in crew if p.get('job') == 'Director'
+        p['name'] for p in result.get('credits', {}).get('crew', [])
+        if p['job'] == 'Director'
     )
-    # For TV, also check created_by if no directors found
-    if not directors and result.get('created_by'):
-        directors = '|'.join(p['name'] for p in result['created_by'])
 
     # Extract top 5 cast members
     cast = '|'.join(
@@ -146,7 +138,7 @@ def get_movie_details(tmdb_id, media_type='movie'):
         'directors':   directors,
         'cast':        cast,
         'countries':   countries,
-        'runtime':     result.get('runtime') or (result.get('episode_run_time', [0])[0] if result.get('episode_run_time') else 0),
+        'runtime':     result.get('runtime', 0),
         'budget':      result.get('budget', 0),
         'revenue':     result.get('revenue', 0),
         'tmdb_rating': round(result.get('vote_average', 0), 1),
@@ -163,17 +155,15 @@ def main():
     if os.path.exists(CACHE_FILE):
         with open(CACHE_FILE, 'r', encoding='utf-8') as f:
             cache = json.load(f)
-        # Remove empty cache entries so missing films get retried
-        cache = {k: v for k, v in cache.items() if v}
         print(f"Cache loaded: {len(cache)} films already fetched.")
     else:
         print("No cache found - starting fresh.")
 
-    # Load ratings (our list of films to enrich)
-    ratings = pd.read_csv(os.path.join(RAW_DIR, 'ratings.csv'))
+    # Load watchlist
+    ratings = pd.read_csv(os.path.join(RAW_DIR, 'watchlist.csv'))
     total = len(ratings)
-    print(f"Films to process: {total}")
-    print(f"Remaining:        {total - len(cache)}")
+    print(f"Watchlist films to process: {total}")
+    print(f"Remaining:                  {total - len(cache)}")
     print()
 
     results = []
@@ -181,7 +171,8 @@ def main():
 
     for i, row in ratings.iterrows():
         title = row['Name']
-        year  = int(row['Year'])
+        year_raw = row.get('Year', 2000)
+        year = int(year_raw) if year_raw and str(year_raw) != 'nan' else 2000
         key   = f"{title}_{year}"  # unique cache key
 
         # Already in cache? Skip the API call
@@ -192,7 +183,7 @@ def main():
         print(f"[{i+1}/{total}] {title} ({year})", end='', flush=True)
 
         # Step 1: get TMDb ID
-        tmdb_id, media_type = search_movie(title, year)
+        tmdb_id = search_movie(title, year)
         time.sleep(0.15)  # be polite to the API, pleaaaaaaassssse
 
         if not tmdb_id:
@@ -203,12 +194,12 @@ def main():
             continue
 
         # Step 2: get full details
-        details = get_movie_details(tmdb_id, media_type)
+        details = get_movie_details(tmdb_id)
         time.sleep(0.15)
 
         director_str = details.get('directors', 'unknown')
         genres_str   = details.get('genres', 'unknown')
-        print(f" [{media_type}] - {director_str} | {genres_str[:35]}")
+        print(f" - {director_str} | {genres_str[:35]}")
 
         cache[key] = details
         results.append({**row.to_dict(), **details})
@@ -231,7 +222,7 @@ def main():
     print()
     print("=" * 50)
     print(f"  DONE!")
-    print(f"  {len(results)} films saved to data/processed/movies_enriched.csv")
+    print(f"  {len(results)} films saved to data/processed/watchlist_enriched.csv")
     if not_found:
         print(f"  {len(not_found)} films not found on TMDb:")
         for f in not_found:
