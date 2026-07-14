@@ -123,6 +123,8 @@ SECTIONS = [
     ("Recommendations", "→"),
     ("Predictions",     "◎"),
     ("Reviews",         "✎"),
+    ("Lists",           "▤"),
+    ("Directors",       "✦"),
 ]
 
 if 'section' not in st.session_state:
@@ -791,7 +793,7 @@ elif section == "Reviews":
         for _, row in filtered.head(15).iterrows():
             rating  = row.get('Rating')
             stars   = '★' * int(rating) + ('½' if rating % 1 >= 0.5 else '') if pd.notna(rating) else ''
-            preview = str(row['Review'])[:400] + ('...' if len(str(row['Review'])) > 400 else '')
+            preview = str(row['Review'])
             st.markdown(f"""
             <div class="film-card">
                 <div style="display:flex; justify-content:space-between; align-items:baseline;">
@@ -977,3 +979,380 @@ Treat the output as a creative experiment in machine learning — not as a real 
 
                     except Exception as e:
                         st.error(f"Error loading model: {e}")
+
+# ─────────────────────────────────────────────────────────────
+# SECTION 8 — LISTS
+# ─────────────────────────────────────────────────────────────
+elif section == "Lists":
+    st.markdown("""
+    <div class="section-title">My<br><em>Lists</em></div>
+    <div class="section-sub">▤ LISTS // CURATED COLLECTIONS FROM LETTERBOXD</div>
+    """, unsafe_allow_html=True)
+
+    lists_data = data.get('lists', {})
+
+    if not lists_data:
+        st.info("Run scripts 11b_fetch_posters.py and 11_export_data.py to generate lists data.")
+    else:
+        list_names     = list(lists_data.keys())
+        selected_list  = st.selectbox("Select a list", list_names)
+        films          = lists_data[selected_list]
+
+        st.caption(f"{len(films)} films · click a poster to see details")
+        st.divider()
+
+        # Session state for selected film
+        if 'selected_film' not in st.session_state:
+            st.session_state['selected_film'] = None
+
+        # Poster grid — 6 columns
+        COLS = 6
+        rows = [films[i:i+COLS] for i in range(0, len(films), COLS)]
+
+        for row in rows:
+            cols = st.columns(COLS)
+            for col, film in zip(cols, row):
+                with col:
+                    poster_url = film.get('poster')
+                    name       = film.get('name', '')
+                    rating     = film.get('rating')
+                    stars      = '★' * int(rating) + ('½' if rating % 1 >= 0.5 else '') if rating else ''
+                    short_name = name[:16] + '...' if len(name) > 16 else name
+
+                    if poster_url:
+                        st.markdown(f"""
+                        <div style="text-align:center; margin-bottom:4px;">
+                            <img src="{poster_url}"
+                                 style="width:100%; border-radius:6px;
+                                        border:1px solid #1e1e2e;"
+                                 onerror="this.style.display='none'"/>
+                        </div>
+                        """, unsafe_allow_html=True)
+                    else:
+                        st.markdown(f"""
+                        <div style="width:100%; aspect-ratio:2/3; background:#111118;
+                                    border:1px solid #1e1e2e; border-radius:6px;
+                                    display:flex; align-items:center; justify-content:center;
+                                    margin-bottom:4px;">
+                            <span style="color:#333344; font-size:24px;">🎬</span>
+                        </div>
+                        """, unsafe_allow_html=True)
+
+                    st.markdown(f"""
+                    <div style="text-align:center; font-family:'DM Mono',monospace;
+                                font-size:9px; color:#666680; line-height:1.4; margin-bottom:4px;">
+                        {short_name}<br>
+                        <span style="color:#e8c96a;">{stars if stars else '—'}</span>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                    if st.button("▸ Details", key=f"film_{selected_list}_{name}", use_container_width=True):
+                        if st.session_state['selected_film'] == name:
+                            st.session_state['selected_film'] = None
+                        else:
+                            st.session_state['selected_film'] = name
+                        st.rerun()
+
+        # Detail panel — appears below the grid when a film is selected
+        selected = st.session_state.get('selected_film')
+        if selected:
+            film_detail = next((f for f in films if f['name'] == selected), None)
+            if film_detail:
+                st.divider()
+                rating  = film_detail.get('rating')
+                stars   = '★' * int(rating) + ('½' if rating % 1 >= 0.5 else '') if rating else ''
+                genres  = film_detail.get('genres', '')
+                review  = film_detail.get('review')
+                year    = film_detail.get('year', '')
+                poster  = film_detail.get('poster')
+
+                col_img, col_info = st.columns([1, 3])
+                with col_img:
+                    if poster:
+                        st.markdown(f"""
+                        <img src="{poster}" style="width:100%; border-radius:8px;
+                                   border:1px solid #1e1e2e;"/>
+                        """, unsafe_allow_html=True)
+
+                with col_info:
+                    st.markdown(f"""
+                    <div style="padding: 8px 0;">
+                        <div style="font-family:'Playfair Display',serif; font-size:24px;
+                                    font-weight:700; color:#e8e8f0; margin-bottom:4px;">
+                            {selected}
+                        </div>
+                        <div style="font-family:'DM Mono',monospace; font-size:11px;
+                                    color:#444460; margin-bottom:8px;">
+                            {year}{' · ' + genres if genres else ''}
+                        </div>
+                        <div style="font-size:20px; color:#e8c96a; margin-bottom:12px;">
+                            {stars if stars else 'Not rated'}
+                            {'<span style="font-family:DM Mono,monospace; font-size:11px; color:#444460;"> (' + str(rating) + ')</span>' if rating else ''}
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                    if review:
+                        preview = review
+                        st.markdown(f"""
+                        <div style="font-size:13px; color:#9999b8; line-height:1.7;
+                                    font-style:italic; border-left:2px solid #1e1e2e;
+                                    padding-left:16px; margin-top:8px;">
+                            "{preview}"
+                        </div>
+                        """, unsafe_allow_html=True)
+                    else:
+                        st.caption("No review written for this film.")
+
+                    if st.button("✕  Close", key="close_detail"):
+                        st.session_state['selected_film'] = None
+                        st.rerun()
+
+# ─────────────────────────────────────────────────────────────
+# SECTION 9 — DIRECTOR DEEP-DIVE
+# ─────────────────────────────────────────────────────────────
+elif section == "Directors":
+    st.markdown("""
+    <div class="section-title">Director<br><em>Deep Dive</em></div>
+    <div class="section-sub">✦ DIRECTORS // PHOTO · BIO · FILMS · RATING OVER TIME</div>
+    """, unsafe_allow_html=True)
+
+    directors_deep = data.get('directors_deep', {})
+
+    if not directors_deep:
+        st.info("Run scripts 11c_fetch_directors.py and 11_export_data.py first.")
+    else:
+        # Sort by avg_rating desc for the selector
+        dir_names = sorted(
+            directors_deep.keys(),
+            key=lambda x: directors_deep[x].get('avg_rating', 0),
+            reverse=True
+        )
+
+        selected_dir = st.selectbox("Select a director", dir_names)
+        d = directors_deep[selected_dir]
+
+        st.divider()
+
+        # ── Header: photo + bio ──
+        col_photo, col_bio = st.columns([1, 3])
+
+        with col_photo:
+            if d.get('photo'):
+                st.markdown(f"""
+                <img src="{d['photo']}"
+                     style="width:100%; border-radius:10px; border:1px solid #1e1e2e;"/>
+                """, unsafe_allow_html=True)
+            else:
+                st.markdown("""
+                <div style="width:100%; aspect-ratio:3/4; background:#111118;
+                            border:1px solid #1e1e2e; border-radius:10px;
+                            display:flex; align-items:center; justify-content:center;">
+                    <span style="font-size:40px;">🎬</span>
+                </div>
+                """, unsafe_allow_html=True)
+
+        with col_bio:
+            avg  = d.get('avg_rating', 0)
+            cnt  = d.get('count', len(d.get('films', [])))
+            birth = d.get('birthday', '')
+            place = d.get('birthplace', '')
+            stars = '★' * int(avg) + ('½' if avg % 1 >= 0.5 else '') if avg else ''
+
+            st.markdown(f"""
+            <div style="padding: 8px 0;">
+                <div style="font-family:'Playfair Display',serif; font-size:28px;
+                            font-weight:900; color:#e8e8f0; margin-bottom:6px;">
+                    {selected_dir}
+                </div>
+                <div style="font-family:'DM Mono',monospace; font-size:10px;
+                            color:#444460; letter-spacing:0.1em; margin-bottom:12px;">
+                    {f'{birth[:4]} · {place}' if birth and place else place or birth or ''}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            m1, m2, m3 = st.columns(3)
+            m1.metric("Films watched", cnt)
+            m2.metric("Avg rating", f"{avg:.2f}")
+            m3.metric("vs my avg", f"{avg - data['stats']['avg_rating']:+.2f}")
+
+            if d.get('bio'):
+                st.markdown(f"""
+                <div style="font-size:13px; color:#666680; line-height:1.65;
+                            margin-top:12px; font-style:italic;">
+                    "{d['bio']}"
+                </div>
+                """, unsafe_allow_html=True)
+
+        st.divider()
+
+        # ── Films poster grid ──
+        films = d.get('films', [])
+        if films:
+            st.markdown("""
+            <div style="font-family:'DM Mono',monospace; font-size:10px;
+                        color:#444460; letter-spacing:0.12em; margin-bottom:12px;">
+                FILMS I WATCHED
+            </div>""", unsafe_allow_html=True)
+
+            COLS = 6
+            rows = [films[i:i+COLS] for i in range(0, len(films), COLS)]
+
+            if 'dir_selected_film' not in st.session_state:
+                st.session_state['dir_selected_film'] = None
+
+            for row in rows:
+                cols = st.columns(COLS)
+                for col, film in zip(cols, row):
+                    with col:
+                        poster = film.get('poster')
+                        name   = film.get('name', '')
+                        rating = film.get('rating')
+                        stars  = '★' * int(rating) + ('½' if rating % 1 >= 0.5 else '') if rating else ''
+                        short  = name[:16] + '...' if len(name) > 16 else name
+
+                        if poster:
+                            st.markdown(f"""
+                            <div style="text-align:center; margin-bottom:4px;">
+                                <img src="{poster}"
+                                     style="width:100%; border-radius:6px;
+                                            border:1px solid #1e1e2e;"/>
+                            </div>""", unsafe_allow_html=True)
+                        else:
+                            st.markdown("""
+                            <div style="width:100%; aspect-ratio:2/3; background:#111118;
+                                        border:1px solid #1e1e2e; border-radius:6px;
+                                        display:flex; align-items:center; justify-content:center;
+                                        margin-bottom:4px;">
+                                <span style="color:#333344; font-size:20px;">🎬</span>
+                            </div>""", unsafe_allow_html=True)
+
+                        st.markdown(f"""
+                        <div style="text-align:center; font-family:'DM Mono',monospace;
+                                    font-size:9px; color:#666680; line-height:1.4; margin-bottom:4px;">
+                            {short}<br>
+                            <span style="color:#e8c96a;">{stars if stars else '—'}</span>
+                        </div>""", unsafe_allow_html=True)
+
+                        if st.button("▸  details", key=f"dir_{selected_dir}_{name}",
+                                     use_container_width=True):
+                            if st.session_state['dir_selected_film'] == name:
+                                st.session_state['dir_selected_film'] = None
+                            else:
+                                st.session_state['dir_selected_film'] = name
+                            st.rerun()
+
+            # Film detail panel
+            sel_film = st.session_state.get('dir_selected_film')
+            if sel_film:
+                film_detail = next((f for f in films if f['name'] == sel_film), None)
+                if film_detail:
+                    st.divider()
+                    rating  = film_detail.get('rating')
+                    stars   = '★' * int(rating) + ('½' if rating % 1 >= 0.5 else '') if rating else ''
+                    review  = film_detail.get('review')
+                    genres  = film_detail.get('genres', '')
+                    year    = film_detail.get('year', '')
+                    poster  = film_detail.get('poster')
+                    tmdb    = film_detail.get('tmdb_rating')
+
+                    col_img, col_info = st.columns([1, 3])
+                    with col_img:
+                        if poster:
+                            st.markdown(f"""
+                            <img src="{poster}" style="width:100%; border-radius:8px;
+                                       border:1px solid #1e1e2e;"/>
+                            """, unsafe_allow_html=True)
+
+                    with col_info:
+                        st.markdown(f"""
+                        <div style="padding:8px 0;">
+                            <div style="font-family:'Playfair Display',serif; font-size:22px;
+                                        font-weight:700; color:#e8e8f0; margin-bottom:4px;">
+                                {sel_film}
+                            </div>
+                            <div style="font-family:'DM Mono',monospace; font-size:10px;
+                                        color:#444460; margin-bottom:8px;">
+                                {year}{' · ' + genres if genres else ''}
+                            </div>
+                            <div style="font-size:18px; color:#e8c96a; margin-bottom:8px;">
+                                {stars if stars else 'Not rated'}
+                                {'<span style="font-family:DM Mono,monospace; font-size:10px; color:#444460;"> my rating · TMDb ' + str(round(tmdb, 1)) + '</span>' if tmdb else ''}
+                            </div>
+                        </div>
+                        """, unsafe_allow_html=True)
+
+                        if review:
+                            st.markdown(f"""
+                            <div style="font-size:13px; color:#9999b8; line-height:1.7;
+                                        font-style:italic; border-left:2px solid #1e1e2e;
+                                        padding-left:16px; margin-top:8px;">
+                                "{review}"
+                            </div>
+                            """, unsafe_allow_html=True)
+                        else:
+                            st.caption("No review written for this film.")
+
+                        if st.button("✕  Close", key="close_dir_detail"):
+                            st.session_state['dir_selected_film'] = None
+                            st.rerun()
+
+        st.divider()
+
+        # ── Rating over time ──
+        rot = d.get('rating_over_time', [])
+        if len(rot) >= 2:
+            st.markdown("""
+            <div style="font-family:'DM Mono',monospace; font-size:10px;
+                        color:#444460; letter-spacing:0.12em; margin-bottom:12px;">
+                RATING OVER TIME
+            </div>""", unsafe_allow_html=True)
+
+            rot_df = pd.DataFrame(rot)
+            rot_df['date'] = pd.to_datetime(rot_df['date'])
+
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(
+                x=rot_df['date'], y=rot_df['rating'],
+                mode='markers+lines',
+                marker=dict(color=GOLD, size=8),
+                line=dict(color=GOLD, width=1.5),
+                text=rot_df['name'],
+                hovertemplate='<b>%{text}</b><br>%{x|%Y}<br>★ %{y}<extra></extra>'
+            ))
+            fig.add_hline(y=data['stats']['avg_rating'], line_dash='dash',
+                          line_color='#333344',
+                          annotation_text=f"my avg ({data['stats']['avg_rating']})",
+                          annotation_font_color='#444460')
+            fig.update_layout(**plotly_layout(
+                title=f'When I watched {selected_dir} — and how I rated it',
+                height=300, showlegend=False
+            ))
+            fig.update_xaxes(title=None)
+            fig.update_yaxes(range=[0, 5.5], title=None)
+            st.plotly_chart(fig, use_container_width=True)
+
+        # ── Watchlist ──
+        watchlist_films = d.get('watchlist', [])
+        if watchlist_films:
+            st.markdown(f"""
+            <div style="font-family:'DM Mono',monospace; font-size:10px;
+                        color:#444460; letter-spacing:0.12em; margin:12px 0;">
+                STILL TO WATCH ({len(watchlist_films)} films on watchlist)
+            </div>""", unsafe_allow_html=True)
+
+            wl_cols = st.columns(min(len(watchlist_films), 8))
+            for col, film in zip(wl_cols, watchlist_films):
+                with col:
+                    poster = film.get('poster')
+                    name   = film.get('name', '')
+                    short  = name[:14] + '...' if len(name) > 14 else name
+                    if poster:
+                        st.markdown(f"""
+                        <div style="text-align:center;">
+                            <img src="{poster}" style="width:100%; border-radius:6px;
+                                       border:1px solid #1e1e2e; margin-bottom:4px;"/>
+                            <div style="font-family:'DM Mono',monospace; font-size:8px;
+                                        color:#444460;">{short}</div>
+                        </div>""", unsafe_allow_html=True)

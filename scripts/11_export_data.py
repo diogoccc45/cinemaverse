@@ -24,6 +24,8 @@ DATA_DIR   = os.path.join(ROOT_DIR, 'data', 'processed')
 RAW_DIR    = os.path.join(ROOT_DIR, 'data', 'raw')
 OUT_FILE   = os.path.join(ROOT_DIR, 'data.json')
 
+TMDB_IMG = 'https://image.tmdb.org/t/p/w500'
+
 print("Loading data...")
 
 # ─────────────────────────────────────────────────────────────
@@ -60,6 +62,24 @@ except FileNotFoundError:
 
 print(f"  {len(enriched)} watched films")
 print(f"  {len(watchlist)} watchlist films")
+
+# Build poster lookup
+poster_lookup = {}
+if 'poster_path' in enriched.columns:
+    for _, row in enriched.iterrows():
+        if pd.notna(row.get('poster_path')):
+            poster_lookup[row['Name']] = f"{TMDB_IMG}{row['poster_path']}"
+    print(f"  Poster lookup: {len(poster_lookup)} posters")
+else:
+    print("  No poster_path column — run script 11b first")
+
+# Build reviews lookup
+reviews_lookup = {}
+for _, row in reviews[reviews['Review'].notna()].iterrows():
+    reviews_lookup[row['Name']] = {
+        'text':   str(row['Review']),
+        'rating': float(row['Rating']) if pd.notna(row.get('Rating')) else None
+    }
 
 # ─────────────────────────────────────────────────────────────
 # BUILD DATA DICT
@@ -159,6 +179,7 @@ film_cols = ['Name', 'Year', 'Rating', 'genres', 'directors',
              'countries', 'runtime', 'tmdb_rating', 'overview']
 films_clean = enriched[[c for c in film_cols if c in enriched.columns]].copy()
 films_clean['decade'] = (films_clean['Year'] // 10 * 10).astype(int)
+films_clean['poster'] = films_clean['Name'].map(poster_lookup)
 data['films'] = clean_df(films_clean)
 
 # Galaxy embeddings
@@ -173,7 +194,7 @@ if has_embeddings:
 reviews_clean = reviews[reviews['Review'].notna()].copy()
 reviews_clean['review_length'] = reviews_clean['Review'].str.len()
 data['reviews'] = clean_df(
-    reviews_clean[['Name', 'Year', 'Rating', 'Review', 'review_length']].head(200)
+    reviews_clean[['Name', 'Year', 'Rating', 'Review', 'review_length']]
 )
 
 # Me vs crowd 
@@ -298,6 +319,138 @@ data['five_star'] = clean_df(
 data['half_star'] = clean_df(
     enriched[enriched['Rating'] == 0.5][['Name', 'Year', 'genres', 'directors']].sort_values('Year')
 )
+
+# ─────────────────────────────────────────────────────────────
+# LISTS — with posters and reviews
+# ─────────────────────────────────────────────────────────────
+print("Building lists...")
+
+lists_dir  = os.path.join(RAW_DIR, 'lists')
+lists_data = {}
+
+for fname in sorted(os.listdir(lists_dir)):
+    if not fname.endswith('.csv'):
+        continue
+    try:
+        list_df = pd.read_csv(os.path.join(lists_dir, fname), skiprows=4)
+    except Exception:
+        list_df = pd.read_csv(os.path.join(lists_dir, fname), skiprows=4)
+
+    if 'Name' not in list_df.columns:
+        continue
+
+    list_name = fname.replace('.csv', '').replace('-', ' ').title()
+    films_in_list = []
+
+    for _, row in list_df.iterrows():
+        name  = row['Name']
+        match = enriched[enriched['Name'] == name]
+
+        if match.empty:
+            entry = {
+                'name':   name,
+                'year':   int(row['Year']) if 'Year' in row and pd.notna(row.get('Year')) else None,
+                'rating': None,
+                'genres': None,
+                'poster': poster_lookup.get(name),
+                'review': reviews_lookup.get(name, {}).get('text'),
+            }
+        else:
+            m = match.iloc[0]
+            entry = {
+                'name':   name,
+                'year':   int(m['Year']) if pd.notna(m['Year']) else None,
+                'rating': float(m['Rating']) if pd.notna(m.get('Rating')) else None,
+                'genres': str(m['genres']).replace('|', ' · ') if pd.notna(m.get('genres')) else None,
+                'poster': poster_lookup.get(name),
+                'review': reviews_lookup.get(name, {}).get('text'),
+            }
+        films_in_list.append(entry)
+
+    lists_data[list_name] = films_in_list
+    print(f"  {list_name}: {len(films_in_list)} films, "
+          f"{sum(1 for f in films_in_list if f['poster'])} with poster, "
+          f"{sum(1 for f in films_in_list if f['review'])} with review")
+
+data['lists'] = lists_data
+
+# ─────────────────────────────────────────────────────────────
+# DIRECTORS DEEP-DIVE DATA
+# ─────────────────────────────────────────────────────────────
+print("Building director deep-dive data...")
+
+try:
+    with open(os.path.join(DATA_DIR, 'directors_enriched.json'), 'r', encoding='utf-8') as f:
+        directors_enriched = json.load(f)
+
+    # For each director, add their films with full details
+    directors_deep = {}
+    for dir_name, dir_info in directors_enriched.items():
+        # Films by this director
+        dir_films = dirs_exp[dirs_exp['director'] == dir_name].copy()
+        dir_films = dir_films.merge(
+            enriched[['Name', 'Year', 'Rating', 'genres', 'tmdb_rating', 'overview']],
+            on=['Name', 'Year'], how='left'
+        ) if 'Year' in dirs_exp.columns else dir_films
+
+        # Get films from enriched directly
+        mask = enriched['directors'].fillna('').str.contains(dir_name, regex=False)
+        dir_film_rows = enriched[mask].copy()
+
+        films_list = []
+        for _, row in dir_film_rows.sort_values('Rating', ascending=False).iterrows():
+            films_list.append({
+                'name':        row['Name'],
+                'year':        int(row['Year']) if pd.notna(row['Year']) else None,
+                'rating':      float(row['Rating']) if pd.notna(row.get('Rating')) else None,
+                'genres':      str(row['genres']).replace('|', ' · ') if pd.notna(row.get('genres')) else None,
+                'tmdb_rating': float(row['tmdb_rating']) if pd.notna(row.get('tmdb_rating')) else None,
+                'poster':      poster_lookup.get(row['Name']),
+                'review':      reviews_lookup.get(row['Name'], {}).get('text'),
+            })
+
+        # Watchlist films by this director
+        watchlist_films = []
+        if 'directors' in watchlist.columns:
+            wl_mask = watchlist['directors'].fillna('').str.contains(dir_name, regex=False)
+            for _, row in watchlist[wl_mask].iterrows():
+                watchlist_films.append({
+                    'name':   row['Name'],
+                    'year':   int(row['Year']) if pd.notna(row.get('Year')) else None,
+                    'poster': poster_lookup.get(row['Name']),
+                })
+
+        # Rating over time (by diary date)
+        diary_merged = diary.merge(
+            enriched[['Name', 'Rating', 'directors']],
+            on='Name', how='inner'
+        )
+        dir_diary = diary_merged[
+            diary_merged['directors'].fillna('').str.contains(dir_name, regex=False)
+        ].sort_values('Date')
+
+        rating_over_time = []
+        for _, row in dir_diary.iterrows():
+            if pd.notna(row.get('Rating')):
+                rating_over_time.append({
+                    'date':   str(row['Date'].date()),
+                    'name':   row['Name'],
+                    'rating': float(row['Rating']),
+                })
+
+        directors_deep[dir_name] = {
+            **dir_info,
+            'films':            films_list,
+            'watchlist':        watchlist_films,
+            'rating_over_time': rating_over_time,
+        }
+
+    data['directors_deep'] = directors_deep
+    print(f"  {len(directors_deep)} directors with deep data")
+
+except FileNotFoundError:
+    print("  directors_enriched.json not found — run script 11c first")
+    data['directors_deep'] = {}
 
 # ─────────────────────────────────────────────────────────────
 # SAVE
