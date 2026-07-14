@@ -24,9 +24,9 @@ import matplotlib.patheffects as pe
 import os
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR   = os.path.join(SCRIPT_DIR, '..')
-DATA_DIR   = os.path.join(ROOT_DIR, 'data', 'processed')
-OUT_DIR    = os.path.join(ROOT_DIR, 'output')
+ROOT_DIR = os.path.join(SCRIPT_DIR, '..')
+DATA_DIR = os.path.join(ROOT_DIR, 'data', 'processed')
+OUT_DIR = os.path.join(ROOT_DIR, 'output')
 os.makedirs(OUT_DIR, exist_ok=True)
 
 plt.rcParams.update({
@@ -54,7 +54,6 @@ PURPLE = '#9966ff'
 # ─────────────────────────────────────────────────────────────
 # STEP 1 - LOAD DATA
 # ─────────────────────────────────────────────────────────────
-print("Step 1/5 - Loading data...")
 
 enriched   = pd.read_csv(os.path.join(DATA_DIR, 'movies_enriched.csv'))
 watchlist  = pd.read_csv(os.path.join(DATA_DIR, 'watchlist_enriched.csv'))
@@ -86,7 +85,6 @@ print(f"  Films you loved (4.5+):         {len(loved)}")
 # sentence-transformers encodes each synopsis into a 384-dim vector
 # Films with similar meaning end up close in this vector space
 # ─────────────────────────────────────────────────────────────
-print("\nStep 2/5 - Loading sentence-transformers model...")
 
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -106,8 +104,6 @@ if os.path.exists(EMBED_CACHE):
     candidate_embeddings  = cached['candidates']
     print(f"  Loaded from cache!")
 else:
-    print("\nStep 3/5 - Encoding synopses (~3-5 minutes)...")
-
     print("  Encoding loved films...")
     loved_embeddings = model.encode(
         loved['overview'].tolist(),
@@ -141,7 +137,6 @@ else:
 # For each candidate film, compute its avg cosine similarity
 # to all films you loved — weighted by your rating
 # ─────────────────────────────────────────────────────────────
-print("\nStep 4/5 - Computing semantic similarity...")
 
 # Weights: 5-star films count more than 4.5-star
 rating_weights = loved['Rating'].values
@@ -193,7 +188,6 @@ candidates_with_overview.to_csv(
 # ─────────────────────────────────────────────────────────────
 # STEP 5 - VISUALISE
 # ─────────────────────────────────────────────────────────────
-print("\nStep 5/5 - Generating charts...")
 
 # ── CHART 1: Top semantic watchlist recommendations ──
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 10))
@@ -239,7 +233,6 @@ plt.close()
 print("  Saved: output/35_semantic_recommendations.png")
 
 # ── CHART 2: Most similar films to your top 5-star films ──
-print("  Building most-similar pairs chart...")
 
 top5 = enriched_with_overview[enriched_with_overview['Rating'] == 5.0].head(8)
 top5_embs = model.encode(top5['overview'].tolist(), show_progress_bar=False)
@@ -308,8 +301,6 @@ print("  Saved: output/36_semantic_similar_pairs.png")
 # SUMMARY
 # ─────────────────────────────────────────────────────────────
 print()
-print("=" * 55)
-print("  DONE!")
 print("=" * 55)
 print(f"  35 - Semantic recommendations (watchlist + discoveries)")
 print(f"  36 - Film-by-film similarity pairs")

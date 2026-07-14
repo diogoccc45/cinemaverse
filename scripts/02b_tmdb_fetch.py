@@ -24,12 +24,12 @@ import os
 
 # PATHS
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR   = os.path.join(SCRIPT_DIR, '..')
-RAW_DIR    = os.path.join(ROOT_DIR, 'data', 'raw')
-OUT_DIR    = os.path.join(ROOT_DIR, 'data', 'processed')
+ROOT_DIR = os.path.join(SCRIPT_DIR, '..')
+RAW_DIR = os.path.join(ROOT_DIR, 'data', 'raw')
+OUT_DIR = os.path.join(ROOT_DIR, 'data', 'processed')
 os.makedirs(OUT_DIR, exist_ok=True)
 
-CACHE_FILE  = os.path.join(OUT_DIR, 'watchlist_cache.json')
+CACHE_FILE = os.path.join(OUT_DIR, 'watchlist_cache.json')
 OUTPUT_FILE = os.path.join(OUT_DIR, 'watchlist_enriched.csv')
 
 # API KEY - reads from .env file

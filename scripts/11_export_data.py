@@ -19,10 +19,10 @@ import json
 import os
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR   = os.path.join(SCRIPT_DIR, '..')
-DATA_DIR   = os.path.join(ROOT_DIR, 'data', 'processed')
-RAW_DIR    = os.path.join(ROOT_DIR, 'data', 'raw')
-OUT_FILE   = os.path.join(ROOT_DIR, 'data.json')
+ROOT_DIR = os.path.join(SCRIPT_DIR, '..')
+DATA_DIR = os.path.join(ROOT_DIR, 'data', 'processed')
+RAW_DIR = os.path.join(ROOT_DIR, 'data', 'raw')
+OUT_FILE = os.path.join(ROOT_DIR, 'data.json')
 
 TMDB_IMG = 'https://image.tmdb.org/t/p/w500'
 
@@ -31,10 +31,10 @@ print("Loading data...")
 # ─────────────────────────────────────────────────────────────
 # LOAD ALL PROCESSED DATA
 # ─────────────────────────────────────────────────────────────
-enriched   = pd.read_csv(os.path.join(DATA_DIR, 'movies_enriched.csv'))
-watchlist  = pd.read_csv(os.path.join(DATA_DIR, 'watchlist_enriched.csv'))
-diary      = pd.read_csv(os.path.join(RAW_DIR,  'diary.csv'))
-reviews    = pd.read_csv(os.path.join(RAW_DIR,  'reviews.csv'))
+enriched = pd.read_csv(os.path.join(DATA_DIR, 'movies_enriched.csv'))
+watchlist = pd.read_csv(os.path.join(DATA_DIR, 'watchlist_enriched.csv'))
+diary = pd.read_csv(os.path.join(RAW_DIR,  'diary.csv'))
+reviews = pd.read_csv(os.path.join(RAW_DIR,  'reviews.csv'))
 diary['Date'] = pd.to_datetime(diary['Date'])
 
 recs_wl   = pd.read_csv(os.path.join(DATA_DIR, 'recs_watchlist.csv'))
@@ -84,7 +84,6 @@ for _, row in reviews[reviews['Review'].notna()].iterrows():
 # ─────────────────────────────────────────────────────────────
 # BUILD DATA DICT
 # ─────────────────────────────────────────────────────────────
-print("Building data.json...")
 
 def clean_df(df, cols=None):
     if cols:
@@ -323,7 +322,6 @@ data['half_star'] = clean_df(
 # ─────────────────────────────────────────────────────────────
 # LISTS — with posters and reviews
 # ─────────────────────────────────────────────────────────────
-print("Building lists...")
 
 lists_dir  = os.path.join(RAW_DIR, 'lists')
 lists_data = {}
@@ -377,7 +375,6 @@ data['lists'] = lists_data
 # ─────────────────────────────────────────────────────────────
 # DIRECTORS DEEP-DIVE DATA
 # ─────────────────────────────────────────────────────────────
-print("Building director deep-dive data...")
 
 try:
     with open(os.path.join(DATA_DIR, 'directors_enriched.json'), 'r', encoding='utf-8') as f:

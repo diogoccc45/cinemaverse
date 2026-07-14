@@ -27,9 +27,9 @@ import numpy as np
 import os
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR   = os.path.join(SCRIPT_DIR, '..')
-DATA_FILE  = os.path.join(ROOT_DIR, 'data', 'processed', 'movies_enriched.csv')
-OUT_DIR    = os.path.join(ROOT_DIR, 'output')
+ROOT_DIR = os.path.join(SCRIPT_DIR, '..')
+DATA_FILE = os.path.join(ROOT_DIR, 'data', 'processed', 'movies_enriched.csv')
+OUT_DIR = os.path.join(ROOT_DIR, 'output')
 os.makedirs(OUT_DIR, exist_ok=True)
 
 plt.rcParams.update({
@@ -58,7 +58,6 @@ TEAL   = '#00ccaa'
 # ─────────────────────────────────────────────────────────────
 # BUILD THE NETWORK
 # ─────────────────────────────────────────────────────────────
-print("Building film network...")
 
 df = pd.read_csv(DATA_FILE)
 df = df[df['genres'].notna() & df['directors'].notna()].copy()
@@ -115,7 +114,6 @@ print(f"  Density: {density:.4f}")
 # In scale-free networks, most nodes have few connections but
 # a few "hubs" have enormously many — like the internet or social networks
 # ─────────────────────────────────────────────────────────────
-print("\nChart 1/5 - Degree distribution...")
 
 degrees = [d for n, d in G_main.degree()]
 deg_counts = pd.Series(degrees).value_counts().sort_index()
@@ -180,19 +178,18 @@ print("  Saved: output/15_degree_distribution.png")
 # Closeness: how quickly a node can reach all others
 # PageRank: like Google's algorithm — important if connected to important nodes
 # ─────────────────────────────────────────────────────────────
-print("Chart 2/5 - Centrality measures...")
 
 print("  Computing degree centrality...")
-deg_cent  = nx.degree_centrality(G_main)
+deg_cent = nx.degree_centrality(G_main)
 
 print("  Computing betweenness centrality (slow)...")
-bet_cent  = nx.betweenness_centrality(G_main, normalized=True, weight='weight')
+bet_cent = nx.betweenness_centrality(G_main, normalized=True, weight='weight')
 
 print("  Computing closeness centrality...")
-clo_cent  = nx.closeness_centrality(G_main)
+clo_cent = nx.closeness_centrality(G_main)
 
 print("  Computing PageRank...")
-pagerank  = nx.pagerank(G_main, weight='weight', alpha=0.85)
+pagerank = nx.pagerank(G_main, weight='weight', alpha=0.85)
 
 centralities = {
     'Degree\n(most connections)':       deg_cent,
@@ -238,11 +235,10 @@ print("  Saved: output/16_centrality_measures.png")
 # We compare our network against a random Erdos-Renyi graph
 # with the same number of nodes and edges
 # ─────────────────────────────────────────────────────────────
-print("Chart 3/5 - Small world analysis...")
 
 avg_clustering = nx.average_clustering(G_main)
-avg_path       = nx.average_shortest_path_length(G_main)
-diameter       = nx.diameter(G_main)
+avg_path = nx.average_shortest_path_length(G_main)
+diameter = nx.diameter(G_main)
 
 # Generate equivalent random graph to compare
 p_random = (2 * n_edges) / (n_nodes * (n_nodes - 1))
@@ -254,7 +250,7 @@ if not nx.is_connected(G_random):
     G_random = G_random.subgraph(largest_rand).copy()
 
 rand_clustering = nx.average_clustering(G_random)
-rand_path       = nx.average_shortest_path_length(G_random)
+rand_path = nx.average_shortest_path_length(G_random)
 
 # Small-world coefficient sigma:
 # sigma = (C/C_rand) / (L/L_rand)
@@ -333,7 +329,6 @@ print("  Saved: output/17_small_world.png")
 # Louvain maximises modularity — finds groups of nodes that
 # are more connected to each other than to the rest of the network
 # ─────────────────────────────────────────────────────────────
-print("Chart 4/5 - Community detection (Louvain)...")
 
 try:
     from community import community_louvain
@@ -355,7 +350,7 @@ print(f"  Found {n_communities} communities, modularity = {modularity:.3f}")
 comm_data = []
 for comm_id in set(partition.values()):
     members = [n for n, c in partition.items() if c == comm_id]
-    ratings  = [G_main.nodes[n]['rating'] for n in members if G_main.nodes[n]['rating'] > 0]
+    ratings = [G_main.nodes[n]['rating'] for n in members if G_main.nodes[n]['rating'] > 0]
     
     # Find dominant genre in this community
     all_genres = []
@@ -444,7 +439,6 @@ print("  Saved: output/18_communities.png")
 # Full network coloured by community, sized by PageRank
 # Only the main component, spring layout
 # ─────────────────────────────────────────────────────────────
-print("Chart 5/5 - Network visualisation...")
 
 # Use spring layout on a subset for readability
 # Keep only nodes with degree >= median to reduce clutter

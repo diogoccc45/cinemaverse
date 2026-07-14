@@ -54,11 +54,10 @@ PURPLE = '#9966ff'
 TEAL   = '#00ccaa'
 
 # LOAD
-print("Loading data...")
-df    = pd.read_csv(DATA_FILE)
+df = pd.read_csv(DATA_FILE)
 diary = pd.read_csv(DIARY_FILE)
-diary['Date']  = pd.to_datetime(diary['Date'])
-diary['year']  = diary['Date'].dt.year
+diary['Date'] = pd.to_datetime(diary['Date'])
+diary['year'] = diary['Date'].dt.year
 diary['month'] = diary['Date'].dt.month
 diary['yearmonth'] = diary['Date'].dt.to_period('M')
 
@@ -81,12 +80,11 @@ print(f"  {len(df)} films ready.\n")
 # CHART 1 - HEATMAP: genres as % of each year's viewing
 # Using % instead of raw counts so 2025 doesn't dominate visually
 # ─────────────────────────────────────────────────────────────
-print("Chart 1/6 - Genre heatmap by year...")
 
 pivot_raw = genres_diary.groupby(['year','genre']).size().unstack(fill_value=0)
 pivot_raw = pivot_raw[pivot_raw.index.isin([2024, 2025, 2026])]
 top_genres = genres_exp.groupby('genre').size().nlargest(12).index
-pivot_raw  = pivot_raw[top_genres]
+pivot_raw = pivot_raw[top_genres]
 
 # % of each year's total — makes years comparable regardless of volume
 pivot_pct = pivot_raw.div(pivot_raw.sum(axis=1), axis=0) * 100
@@ -135,7 +133,6 @@ print("  Saved: output/09_genre_heatmap_year.png")
 # ─────────────────────────────────────────────────────────────
 # CHART 2 - HEATMAP: genre combinations and avg rating
 # ─────────────────────────────────────────────────────────────
-print("Chart 2/6 - Genre combination heatmap...")
 
 from itertools import combinations
 
@@ -189,7 +186,6 @@ print("  Saved: output/10_genre_combo_heatmap.png")
 # ─────────────────────────────────────────────────────────────
 # CHART 3 - TREEMAP: genre universe — cleaner layout
 # ─────────────────────────────────────────────────────────────
-print("Chart 3/6 - Genre treemap...")
 
 import squarify
 
@@ -252,7 +248,6 @@ plt.close()
 print("  Saved: output/11_genre_treemap.png")
 
 # CHART 4 - RATING EVOLUTION over time
-print("Chart 4/6 - Rating evolution over time...")
 
 df2_sorted = df2[df2['watched_date'].notna()].sort_values('watched_date').copy()
 df2_sorted['rolling_avg'] = df2_sorted['Rating'].rolling(window=30, min_periods=10).mean()
@@ -310,7 +305,6 @@ print("  Saved: output/12_rating_evolution.png")
 # Fixed: quadrant labels placed inside axes using transforms
 # Bigger figure + more separation between nodes and labels
 # ─────────────────────────────────────────────────────────────
-print("Chart 5/6 - Director loyalty...")
 
 from adjustText import adjust_text
 
@@ -359,7 +353,7 @@ adjust_text(
 
 # Dividing lines
 avg_rating = df['Rating'].mean()
-med_std    = dir_stats['std'].median()
+med_std = dir_stats['std'].median()
 ax.axhline(y=avg_rating, color='#444455', linestyle='--', linewidth=0.8)
 ax.axvline(x=med_std,    color='#444455', linestyle='--', linewidth=0.8)
 
@@ -386,7 +380,6 @@ plt.close()
 print("  Saved: output/13_director_loyalty.png")
 
 # CHART 6 - NETWORK: directors connected by shared actors
-print("Chart 6/6 - Director network...")
 
 import networkx as nx
 
@@ -456,7 +449,7 @@ nx.draw_networkx_edges(G, pos, ax=ax,
 norm = mcolors.Normalize(vmin=2.5, vmax=5.0)
 cmap = plt.cm.RdYlGn
 node_colors = [cmap(norm(G.nodes[n]['avg_rating'])) for n in G.nodes()]
-node_sizes  = [G.nodes[n]['films'] * 120 for n in G.nodes()]
+node_sizes = [G.nodes[n]['films'] * 120 for n in G.nodes()]
 
 nx.draw_networkx_nodes(G, pos, ax=ax,
     node_color=node_colors, node_size=node_sizes, alpha=0.9)

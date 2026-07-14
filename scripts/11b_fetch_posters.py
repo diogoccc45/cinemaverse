@@ -20,10 +20,10 @@ import time
 import os
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR   = os.path.join(SCRIPT_DIR, '..')
-DATA_DIR   = os.path.join(ROOT_DIR, 'data', 'processed')
+ROOT_DIR = os.path.join(SCRIPT_DIR, '..')
+DATA_DIR = os.path.join(ROOT_DIR, 'data', 'processed')
 
-CACHE_FILE  = os.path.join(DATA_DIR, 'posters_cache.json')
+CACHE_FILE = os.path.join(DATA_DIR, 'posters_cache.json')
 OUTPUT_FILE = os.path.join(DATA_DIR, 'movies_enriched.csv')
 
 # Load API key
@@ -111,7 +111,7 @@ df.to_csv(OUTPUT_FILE, index=False, encoding='utf-8')
 has_poster = sum(1 for p in poster_paths if p)
 print()
 print("=" * 50)
-print(f"  DONE! {has_poster}/{len(df)} films have posters")
+print(f"  {has_poster}/{len(df)} films have posters")
 print(f"  Saved to movies_enriched.csv")
 print("=" * 50)
 print()

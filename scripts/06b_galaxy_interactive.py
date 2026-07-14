@@ -16,15 +16,14 @@ import numpy as np
 import os
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR   = os.path.join(SCRIPT_DIR, '..')
+ROOT_DIR = os.path.join(SCRIPT_DIR, '..')
 EMBED_FILE = os.path.join(ROOT_DIR, 'data', 'processed', 'embeddings.csv')
-DATA_FILE  = os.path.join(ROOT_DIR, 'data', 'processed', 'movies_enriched.csv')
-OUT_DIR    = os.path.join(ROOT_DIR, 'output')
+DATA_FILE = os.path.join(ROOT_DIR, 'data', 'processed', 'movies_enriched.csv')
+OUT_DIR = os.path.join(ROOT_DIR, 'output')
 
 # ─────────────────────────────────────────────────────────────
 # LOAD
 # ─────────────────────────────────────────────────────────────
-print("Loading data...")
 
 emb = pd.read_csv(EMBED_FILE)
 extra = pd.read_csv(DATA_FILE)
@@ -58,14 +57,13 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.express as px
 
-BG      = '#0a0a0f'
-BG2     = '#111118'
-GOLD    = '#e8c96a'
-MUTED   = '#666680'
-TEXT    = '#e8e8f0'
+BG = '#0a0a0f'
+BG2 = '#111118'
+GOLD = '#e8c96a'
+MUTED = '#666680'
+TEXT = '#e8e8f0'
 
 # ── FIGURE 1: by cluster ──
-print("Building chart 1/3 - by cluster...")
 
 fig1 = go.Figure()
 
@@ -120,7 +118,6 @@ fig1.update_layout(
 )
 
 # ── FIGURE 2: by rating ──
-print("Building chart 2/3 - by rating...")
 
 fig2 = go.Figure()
 
@@ -171,7 +168,6 @@ fig2.update_layout(
 )
 
 # ── FIGURE 3: by decade ──
-print("Building chart 3/3 - by decade...")
 
 fig3 = go.Figure()
 
@@ -223,7 +219,6 @@ fig3.update_layout(
 # ─────────────────────────────────────────────────────────────
 # COMBINE INTO ONE HTML FILE WITH TABS
 # ─────────────────────────────────────────────────────────────
-print("Combining into single HTML file...")
 
 html1 = fig1.to_html(full_html=False, include_plotlyjs=True)
 html2 = fig2.to_html(full_html=False, include_plotlyjs=False)

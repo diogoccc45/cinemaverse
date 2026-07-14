@@ -50,11 +50,10 @@ def api_get(endpoint, params={}):
 # ─────────────────────────────────────────────────────────────
 # LOAD WHAT WE ALREADY HAVE
 # ─────────────────────────────────────────────────────────────
-print("Loading existing data...")
 
-watched   = pd.read_csv(os.path.join(RAW_DIR, 'watched.csv'))
+watched = pd.read_csv(os.path.join(RAW_DIR, 'watched.csv'))
 watchlist = pd.read_csv(os.path.join(RAW_DIR, 'watchlist.csv'))
-enriched  = pd.read_csv(os.path.join(DATA_DIR, 'movies_enriched.csv'))
+enriched = pd.read_csv(os.path.join(DATA_DIR, 'movies_enriched.csv'))
 
 already_known = set(watched['Name'].str.lower()) | set(watchlist['Name'].str.lower())
 print(f"  Already know {len(already_known)} films (watched + watchlist)")
@@ -78,10 +77,9 @@ GENRE_IDS = {
 # ─────────────────────────────────────────────────────────────
 # FETCH POPULAR FILMS BY GENRE
 # ─────────────────────────────────────────────────────────────
-print("\nFetching candidate films from TMDb...")
 
 candidates = []
-seen_ids   = set()
+seen_ids = set()
 
 for genre in top_genres_rated.index:
     if genre not in GENRE_IDS:
@@ -132,7 +130,6 @@ print(f"\n  {len(candidates)} candidate films found")
 # ─────────────────────────────────────────────────────────────
 # FETCH FULL DETAILS FOR EACH CANDIDATE
 # ─────────────────────────────────────────────────────────────
-print("Fetching full details (genres, directors, cast)...")
 
 enriched_candidates = []
 
@@ -177,5 +174,5 @@ df_candidates.to_csv(out_path, index=False, encoding='utf-8')
 
 print()
 print("=" * 50)
-print(f"  DONE! {len(df_candidates)} candidates saved.")
+print(f"  {len(df_candidates)} candidates saved.")
 print(f"  Saved to data/processed/candidates.csv")

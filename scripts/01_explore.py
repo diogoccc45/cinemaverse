@@ -69,7 +69,6 @@ print(f"  {len(diary)} diary entries")
 print(f"  {len(reviews_with_text)} reviews")
 
 # CHART 1 - RATING DISTRIBUTION
-print("\nChart 1/4 - Rating distribution...")
 
 fig, ax = plt.subplots(figsize=(10, 5))
 fig.patch.set_facecolor('#0a0a0f')
@@ -107,7 +106,6 @@ plt.close()
 print("  Saved: output/01_rating_distribution.png")
 
 # CHART 2 - ACTIVITY OVER TIME
-print("Chart 2/4 - Activity over time...")
 
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 7), height_ratios=[2, 1])
 fig.patch.set_facecolor('#0a0a0f')
@@ -142,7 +140,6 @@ plt.close()
 print("  Saved: output/02_activity_over_time.png")
 
 # CHART 3 - DECADES
-print("Chart 3/4 - Decades...")
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
 fig.patch.set_facecolor('#0a0a0f')
@@ -180,7 +177,6 @@ plt.close()
 print("  Saved: output/03_decades.png")
 
 # CHART 4 - OVERVIEW
-print("Chart 4/4 - Overview...")
 
 fig = plt.figure(figsize=(12, 6))
 fig.patch.set_facecolor('#0a0a0f')

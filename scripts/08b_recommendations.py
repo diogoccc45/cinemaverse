@@ -5,7 +5,7 @@ Uses cosine similarity between your taste profile
 and candidate films to recommend what to watch next.
 
 Two recommendation pools:
-  1. Your watchlist (248 films you already saved)
+  1. Your watchlist (films you already saved)
   2. Discovery candidates (fetched in 08a)
 """
 
@@ -21,10 +21,10 @@ import matplotlib.patheffects as pe
 import os
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR   = os.path.join(SCRIPT_DIR, '..')
-DATA_DIR   = os.path.join(ROOT_DIR, 'data', 'processed')
-RAW_DIR    = os.path.join(ROOT_DIR, 'data', 'raw')
-OUT_DIR    = os.path.join(ROOT_DIR, 'output')
+ROOT_DIR = os.path.join(SCRIPT_DIR, '..')
+DATA_DIR = os.path.join(ROOT_DIR, 'data', 'processed')
+RAW_DIR = os.path.join(ROOT_DIR, 'data', 'raw')
+OUT_DIR = os.path.join(ROOT_DIR, 'output')
 os.makedirs(OUT_DIR, exist_ok=True)
 
 plt.rcParams.update({
@@ -53,7 +53,6 @@ BLUE   = '#4488ff'
 # ─────────────────────────────────────────────────────────────
 # LOAD DATA
 # ─────────────────────────────────────────────────────────────
-print("Loading data...")
 
 enriched   = pd.read_csv(os.path.join(DATA_DIR, 'movies_enriched.csv'))
 candidates = pd.read_csv(os.path.join(DATA_DIR, 'candidates.csv'))
@@ -77,11 +76,10 @@ print(f"  {len(candidates)} discovery candidates")
 # BUILD FEATURE VECTORS
 # Same feature space as script 06 so everything is comparable
 # ─────────────────────────────────────────────────────────────
-print("\nBuilding feature vectors...")
 
 # Get top genres and directors from watched films
-top_genres   = enriched['genres'].dropna().str.split('|').explode().value_counts().head(20).index.tolist()
-top_dirs     = enriched['directors'].dropna().str.split('|').explode().value_counts().head(30).index.tolist()
+top_genres = enriched['genres'].dropna().str.split('|').explode().value_counts().head(20).index.tolist()
+top_dirs = enriched['directors'].dropna().str.split('|').explode().value_counts().head(30).index.tolist()
 top_countries = enriched['countries'].dropna().str.split('|').explode().value_counts().head(10).index.tolist()
 
 year_min = enriched['Year'].min()
@@ -169,14 +167,12 @@ def recommend(pool_df, pool_name, top_n=20):
 
     return top
 
-print("\nComputing recommendations...")
-recs_watchlist   = recommend(watchlist_enriched, "Watchlist", top_n=30)
+recs_watchlist = recommend(watchlist_enriched, "Watchlist", top_n=30)
 recs_discoveries = recommend(candidates, "Discoveries", top_n=30)
 
 # ─────────────────────────────────────────────────────────────
 # CHART 1 - TOP WATCHLIST RECOMMENDATIONS
 # ─────────────────────────────────────────────────────────────
-print("\nGenerating charts...")
 
 fig, ax = plt.subplots(figsize=(13, 10))
 fig.patch.set_facecolor('#0a0a0f')
@@ -308,8 +304,6 @@ recs_discoveries.to_csv(os.path.join(DATA_DIR, 'recs_discoveries.csv'),
                         index=False, encoding='utf-8')
 
 print()
-print("=" * 55)
-print("  DONE!")
 print("=" * 55)
 print(f"  27 - Watchlist ranked by match")
 print(f"  28 - Discovery recommendations")

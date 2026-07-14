@@ -18,9 +18,9 @@ import matplotlib.patheffects as pe
 import os
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR   = os.path.join(SCRIPT_DIR, '..')
-DATA_FILE  = os.path.join(ROOT_DIR, 'data', 'processed', 'movies_enriched.csv')
-OUT_DIR    = os.path.join(ROOT_DIR, 'output')
+ROOT_DIR = os.path.join(SCRIPT_DIR, '..')
+DATA_FILE = os.path.join(ROOT_DIR, 'data', 'processed', 'movies_enriched.csv')
+OUT_DIR = os.path.join(ROOT_DIR, 'output')
 os.makedirs(OUT_DIR, exist_ok=True)
 
 plt.rcParams.update({
@@ -48,7 +48,6 @@ PURPLE = '#9966ff'
 # ─────────────────────────────────────────────────────────────
 # STEP 1 - BUILD FEATURE MATRIX
 # ─────────────────────────────────────────────────────────────
-print("Step 1/4 - Building feature matrix...")
 
 df = pd.read_csv(DATA_FILE)
 df = df[df['Rating'].notna() & df['genres'].notna()].copy()
@@ -90,7 +89,6 @@ print(f"  {X.shape[0]} films x {X.shape[1]} features")
 # ─────────────────────────────────────────────────────────────
 # STEP 2 - UMAP: 65 dimensions -> 2
 # ─────────────────────────────────────────────────────────────
-print("Step 2/4 - Running UMAP (30-60 seconds)...")
 
 import umap
 
@@ -110,7 +108,6 @@ print(f"  Done. {X.shape} -> {embedding.shape}")
 # ─────────────────────────────────────────────────────────────
 # STEP 3 - HDBSCAN clustering
 # ─────────────────────────────────────────────────────────────
-print("Step 3/4 - HDBSCAN clustering...")
 
 import hdbscan
 
@@ -135,14 +132,12 @@ for cid in sorted(set(labels)):
 # ─────────────────────────────────────────────────────────────
 # STEP 4 - VISUALISE
 # ─────────────────────────────────────────────────────────────
-print("Step 4/4 - Generating charts...")
-
 cluster_ids = sorted(set(labels))
 cmap_c = plt.cm.tab20
 color_map = {c: cmap_c(i / max(len(cluster_ids), 1)) for i, c in enumerate(cluster_ids)}
 color_map[-1] = (0.2, 0.2, 0.25, 0.25)
 
-# ── CHART 1: coloured by cluster ──
+# CHART 1: coloured by cluster
 fig, ax = plt.subplots(figsize=(15, 11))
 fig.patch.set_facecolor('#0a0a0f')
 ax.set_facecolor('#0a0a0f')
@@ -187,7 +182,7 @@ plt.savefig(os.path.join(OUT_DIR, '20_film_galaxy_clusters.png'),
 plt.close()
 print("  Saved: output/20_film_galaxy_clusters.png")
 
-# ── CHART 2: coloured by rating ──
+# CHART 2: coloured by rating
 fig, ax = plt.subplots(figsize=(14, 10))
 fig.patch.set_facecolor('#0a0a0f')
 ax.set_facecolor('#0a0a0f')
@@ -218,7 +213,7 @@ plt.savefig(os.path.join(OUT_DIR, '21_film_galaxy_ratings.png'),
 plt.close()
 print("  Saved: output/21_film_galaxy_ratings.png")
 
-# ── CHART 3: coloured by decade ──
+# CHART 3: coloured by decade
 decade_colors = {
     1920: '#9b59b6', 1930: '#8e44ad', 1950: '#2471a3', 1960: '#1a5276',
     1970: '#16a085', 1980: '#1e8449', 1990: '#f39c12',
@@ -260,7 +255,7 @@ np.save(os.path.join(ROOT_DIR, 'data', 'processed', 'feature_matrix.npy'), X)
 
 print()
 print("=" * 50)
-print("  DONE! 3 charts saved in output/")
+print("  3 charts saved in output/")
 print("=" * 50)
 print(f"  20 - Galaxy by cluster")
 print(f"  21 - Galaxy by rating")

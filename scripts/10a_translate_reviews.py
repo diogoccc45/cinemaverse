@@ -18,9 +18,9 @@ import time
 import os
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR   = os.path.join(SCRIPT_DIR, '..')
-RAW_DIR    = os.path.join(ROOT_DIR, 'data', 'raw')
-DATA_DIR   = os.path.join(ROOT_DIR, 'data', 'processed')
+ROOT_DIR = os.path.join(SCRIPT_DIR, '..')
+RAW_DIR = os.path.join(ROOT_DIR, 'data', 'raw')
+DATA_DIR = os.path.join(ROOT_DIR, 'data', 'processed')
 
 CACHE_FILE = os.path.join(DATA_DIR, 'translation_cache.json')
 OUTPUT_FILE = os.path.join(DATA_DIR, 'reviews_translated.csv')
@@ -28,7 +28,6 @@ OUTPUT_FILE = os.path.join(DATA_DIR, 'reviews_translated.csv')
 # ─────────────────────────────────────────────────────────────
 # LOAD
 # ─────────────────────────────────────────────────────────────
-print("Loading reviews...")
 
 reviews = pd.read_csv(os.path.join(RAW_DIR, 'reviews.csv'))
 reviews = reviews[reviews['Review'].notna()].copy().reset_index(drop=True)

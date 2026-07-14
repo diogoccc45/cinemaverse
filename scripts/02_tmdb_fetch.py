@@ -25,12 +25,12 @@ import os
 
 # PATHS
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR   = os.path.join(SCRIPT_DIR, '..')
-RAW_DIR    = os.path.join(ROOT_DIR, 'data', 'raw')
-OUT_DIR    = os.path.join(ROOT_DIR, 'data', 'processed')
+ROOT_DIR = os.path.join(SCRIPT_DIR, '..')
+RAW_DIR = os.path.join(ROOT_DIR, 'data', 'raw')
+OUT_DIR = os.path.join(ROOT_DIR, 'data', 'processed')
 os.makedirs(OUT_DIR, exist_ok=True)
 
-CACHE_FILE  = os.path.join(OUT_DIR, 'tmdb_cache.json')
+CACHE_FILE = os.path.join(OUT_DIR, 'tmdb_cache.json')
 OUTPUT_FILE = os.path.join(OUT_DIR, 'movies_enriched.csv')
 
 # API KEY - reads from .env file
@@ -207,7 +207,7 @@ def main():
         time.sleep(0.15)
 
         director_str = details.get('directors', 'unknown')
-        genres_str   = details.get('genres', 'unknown')
+        genres_str = details.get('genres', 'unknown')
         print(f" [{media_type}] - {director_str} | {genres_str[:35]}")
 
         cache[key] = details

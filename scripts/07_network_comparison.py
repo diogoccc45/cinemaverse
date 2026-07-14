@@ -24,9 +24,9 @@ import numpy as np
 import os
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR   = os.path.join(SCRIPT_DIR, '..')
-DATA_FILE  = os.path.join(ROOT_DIR, 'data', 'processed', 'movies_enriched.csv')
-OUT_DIR    = os.path.join(ROOT_DIR, 'output')
+ROOT_DIR = os.path.join(SCRIPT_DIR, '..')
+DATA_FILE = os.path.join(ROOT_DIR, 'data', 'processed', 'movies_enriched.csv')
+OUT_DIR = os.path.join(ROOT_DIR, 'output')
 os.makedirs(OUT_DIR, exist_ok=True)
 
 plt.rcParams.update({
@@ -56,7 +56,6 @@ TEAL   = '#00ccaa'
 # ─────────────────────────────────────────────────────────────
 # STEP 1 - BUILD THE REAL FILM NETWORK
 # ─────────────────────────────────────────────────────────────
-print("Step 1/4 - Building real film network...")
 
 df = pd.read_csv(DATA_FILE)
 df = df[df['genres'].notna() & df['directors'].notna()].copy()
@@ -90,7 +89,6 @@ print(f"  Real network: {N} nodes, {M} edges, avg degree {k}")
 # STEP 2 - BUILD SYNTHETIC MODELS
 # All have same N nodes and approximately same number of edges
 # ─────────────────────────────────────────────────────────────
-print("Step 2/4 - Building synthetic models...")
 
 # Erdos-Renyi: each edge exists with probability p
 # Result: random graph, Poisson degree distribution, no hubs
@@ -116,15 +114,14 @@ print(f"  Watts-Strogatz:  {G_ws.number_of_nodes()} nodes, {G_ws.number_of_edges
 # ─────────────────────────────────────────────────────────────
 # STEP 3 - COMPUTE METRICS FOR ALL 4 NETWORKS
 # ─────────────────────────────────────────────────────────────
-print("Step 3/4 - Computing metrics (betweenness is slow)...")
 
 def compute_metrics(G, name):
-    degrees   = [d for n, d in G.degree()]
-    clust     = nx.average_clustering(G)
-    path      = nx.average_shortest_path_length(G)
-    diam      = nx.diameter(G)
-    bet       = list(nx.betweenness_centrality(G).values())
-    pr        = list(nx.pagerank(G).values())
+    degrees = [d for n, d in G.degree()]
+    clust = nx.average_clustering(G)
+    path = nx.average_shortest_path_length(G)
+    diam = nx.diameter(G)
+    bet = list(nx.betweenness_centrality(G).values())
+    pr = list(nx.pagerank(G).values())
     density   = nx.density(G)
 
     # Small-world sigma compared to equivalent ER
@@ -168,7 +165,6 @@ for G, name in [
 # ─────────────────────────────────────────────────────────────
 # STEP 4 - VISUALISE
 # ─────────────────────────────────────────────────────────────
-print("Step 4/4 - Generating charts...")
 
 COLORS = {
     'My Film Network':  GOLD,

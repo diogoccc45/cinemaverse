@@ -20,12 +20,12 @@ import time
 import os
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR   = os.path.join(SCRIPT_DIR, '..')
-DATA_DIR   = os.path.join(ROOT_DIR, 'data', 'processed')
+ROOT_DIR = os.path.join(SCRIPT_DIR, '..')
+DATA_DIR = os.path.join(ROOT_DIR, 'data', 'processed')
 
-CACHE_FILE  = os.path.join(DATA_DIR, 'directors_cache.json')
+CACHE_FILE = os.path.join(DATA_DIR, 'directors_cache.json')
 OUTPUT_FILE = os.path.join(DATA_DIR, 'directors_enriched.json')
-TMDB_IMG    = 'https://image.tmdb.org/t/p/w300'
+TMDB_IMG = 'https://image.tmdb.org/t/p/w300'
 
 # Load API key
 env_path = os.path.join(ROOT_DIR, '.env')

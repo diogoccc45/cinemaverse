@@ -17,9 +17,9 @@ import os
 
 # PATHS
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR   = os.path.join(SCRIPT_DIR, '..')
+ROOT_DIR = os.path.join(SCRIPT_DIR, '..')
 DATA_FILE  = os.path.join(ROOT_DIR, 'data', 'processed', 'movies_enriched.csv')
-OUT_DIR    = os.path.join(ROOT_DIR, 'output')
+OUT_DIR = os.path.join(ROOT_DIR, 'output')
 os.makedirs(OUT_DIR, exist_ok=True)
 
 # STYLE
@@ -39,12 +39,12 @@ plt.rcParams.update({
     'text.color':        '#e8e8f0',
     'font.family':       'monospace',
 })
-GOLD   = '#e8c96a'
-GREEN  = '#00c030'
-RED    = '#e84040'
-BLUE   = '#4488ff'
+GOLD = '#e8c96a'
+GREEN = '#00c030'
+RED = '#e84040'
+BLUE = '#4488ff'
 PURPLE = '#9966ff'
-TEAL   = '#00ccaa'
+TEAL = '#00ccaa'
 
 # LOAD
 print("Loading enriched data...")
@@ -65,7 +65,6 @@ cast_exp = df[df['cast'].notna()].assign(
 ).explode('actor')
 
 # CHART 1 - TOP GENRES (count + avg rating)
-print("\nChart 1/4 - Genres...")
 
 genre_stats = genres_exp.groupby('genre').agg(
     films=('Name', 'count'),
@@ -106,7 +105,6 @@ plt.close()
 print("  Saved: output/05_genres.png")
 
 # CHART 2 - TOP DIRECTORS (bubble chart, fixed label spacing)
-print("Chart 2/4 - Directors...")
 
 dir_stats = directors_exp.groupby('director').agg(
     films=('Name', 'count'),
@@ -165,7 +163,6 @@ plt.close()
 print("  Saved: output/06_directors.png")
 
 # CHART 3 - TOP ACTORS
-print("Chart 3/4 - Actors...")
 
 actor_stats = cast_exp.groupby('actor').agg(
     films=('Name', 'count'),
@@ -204,7 +201,6 @@ print("  Saved: output/07_actors.png")
 # CHART 4 - ME VS THE CROWD (contrarian films)
 # Two horizontal bar charts: films I loved more + films I hated more
 # Much more readable and interesting than a scatter plot
-print("Chart 4/4 - Me vs the crowd...")
 
 compare = df[(df['Rating'].notna()) & (df['tmdb_rating'] > 0)].copy()
 compare['tmdb_rating_5'] = compare['tmdb_rating'] / 2
