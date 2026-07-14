@@ -53,7 +53,6 @@ cinemaverse/
 │   ├── 11b_fetch_posters.py
 │   ├── 11c_fetch_directors.py
 │   └── 12_upload_model.py
-├── notebooks/
 │   ├── 09_rating_prediction.ipynb
 │   └── 10b_finetune_gpt2.ipynb
 ├── app.py                # Streamlit dashboard

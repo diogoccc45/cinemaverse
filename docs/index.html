@@ -312,6 +312,36 @@
       background: var(--border);
       margin: 0;
     }
+
+    /* ── LIGHTBOX ── */
+    .gallery-item { cursor: zoom-in; }
+
+    #lightbox {
+      display: none;
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.92);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    #lightbox.active { display: flex; }
+    #lightbox img {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 0 80px rgba(0,0,0,0.8);
+    }
+    #lightbox-close {
+      position: fixed; top: 24px; right: 32px;
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      color: #666680;
+      cursor: pointer;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+    #lightbox-close:hover { color: #e8c96a; }
   </style>
 </head>
 <body>
@@ -505,6 +535,35 @@
     <a href="https://cinemaverse.streamlit.app" target="_blank">dashboard</a>
   </div>
 </footer>
+
+<!-- LIGHTBOX -->
+<div id="lightbox">
+  <span id="lightbox-close" onclick="closeLightbox()">✕  close</span>
+  <img id="lightbox-img" src="" alt=""/>
+</div>
+
+<script>
+  document.querySelectorAll('.gallery-item img').forEach(img => {
+    img.addEventListener('click', () => {
+      document.getElementById('lightbox-img').src = img.src;
+      document.getElementById('lightbox').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
+  document.getElementById('lightbox').addEventListener('click', e => {
+    if (e.target === document.getElementById('lightbox')) closeLightbox();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeLightbox();
+  });
+
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+</script>
 
 </body>
 </html>
