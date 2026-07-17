@@ -345,6 +345,49 @@
       transition: color 0.2s;
     }
     #lightbox-close:hover { color: #e8c96a; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(32px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes countUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+    .reveal-delay-5 { transition-delay: 0.5s; }
+    .reveal-delay-6 { transition-delay: 0.6s; }
+    .reveal-delay-7 { transition-delay: 0.7s; }
+    .reveal-delay-8 { transition-delay: 0.8s; }
+
+    /* Hero animations */
+    .hero-eyebrow { animation: fadeUp 0.8s ease 0.1s both; }
+    .hero-title   { animation: fadeUp 0.8s ease 0.25s both; }
+    .hero-sub     { animation: fadeUp 0.8s ease 0.4s both; }
+    .hero .hero-cta, .hero .hero-cta-ghost { animation: fadeUp 0.8s ease 0.55s both; }
+
+    /* Stat counter animation */
+    .stat-value {
+      display: inline-block;
+    }
   </style>
 </head>
 <body>
@@ -381,24 +424,24 @@
 
 <!-- STATS -->
 <div class="stats-bar">
-  <div class="stat-item">
-    <span class="stat-value">778</span>
+  <div class="stat-item reveal">
+    <span class="stat-value" data-value="778" data-suffix="">778</span>
     <span class="stat-label">films watched</span>
   </div>
-  <div class="stat-item">
-    <span class="stat-value">3.34</span>
+  <div class="stat-item reveal">
+    <span class="stat-value" data-value="3.34" data-suffix="">3.34</span>
     <span class="stat-label">avg rating</span>
   </div>
-  <div class="stat-item">
-    <span class="stat-value">428</span>
+  <div class="stat-item reveal">
+    <span class="stat-value" data-value="428" data-suffix="">428</span>
     <span class="stat-label">reviews written</span>
   </div>
-  <div class="stat-item">
-    <span class="stat-value">12</span>
+  <div class="stat-item reveal">
+    <span class="stat-value" data-value="12" data-suffix="">12</span>
     <span class="stat-label">curated lists</span>
   </div>
-  <div class="stat-item">
-    <span class="stat-value">20+</span>
+  <div class="stat-item reveal">
+    <span class="stat-value" data-value="20" data-suffix="+">20+</span>
     <span class="stat-label">directors deep-dived</span>
   </div>
 </div>
@@ -407,50 +450,50 @@
 
 <!-- FEATURES -->
 <section id="features">
-  <p class="section-label">what it does</p>
-  <h2 class="section-title">A data science project<br><em>about cinema.</em></h2>
-  <p class="section-desc">
+  <p class="section-label reveal">what it does</p>
+  <h2 class="section-title reveal">A data science project<br><em>about cinema.</em></h2>
+  <p class="section-desc reveal">
     Built from a raw Letterboxd export, enriched with TMDb metadata,
     and analysed through the lens of network science, ML and NLP.
   </p>
 
   <div class="features">
-    <div class="feature">
+    <div class="feature reveal reveal-delay-1">
       <span class="feature-icon">◈</span>
       <div class="feature-title">Exploration</div>
       <div class="feature-desc">Genre profiles, director bubbles, actor rankings, production company analysis and me vs the crowd.</div>
     </div>
-    <div class="feature">
+    <div class="feature reveal reveal-delay-2">
       <span class="feature-icon">⬡</span>
       <div class="feature-title">Network Science</div>
       <div class="feature-desc">Film graph built from shared actors and directors. Louvain community detection. Comparison with Erdős–Rényi, Barabási–Albert and Watts–Strogatz models.</div>
     </div>
-    <div class="feature">
+    <div class="feature reveal reveal-delay-3">
       <span class="feature-icon">✦</span>
       <div class="feature-title">Film Galaxy</div>
       <div class="feature-desc">Every film projected into 2D via UMAP + HDBSCAN clustering. Coloured by rating, cluster or decade. Hover for details.</div>
     </div>
-    <div class="feature">
+    <div class="feature reveal reveal-delay-4">
       <span class="feature-icon">→</span>
       <div class="feature-title">Recommendations</div>
       <div class="feature-desc">Cosine similarity and semantic embeddings via sentence-transformers to rank my watchlist and surface new discoveries.</div>
     </div>
-    <div class="feature">
+    <div class="feature reveal reveal-delay-5">
       <span class="feature-icon">◎</span>
       <div class="feature-title">Rating Prediction</div>
       <div class="feature-desc">Random Forest trained on my ratings with weighted director, genre and franchise features. Solves cold-start via synopsis embeddings.</div>
     </div>
-    <div class="feature">
+    <div class="feature reveal reveal-delay-6">
       <span class="feature-icon">✎</span>
       <div class="feature-title">AI Reviews</div>
       <div class="feature-desc">DistilGPT-2 fine-tuned on 417 of my Letterboxd reviews. Generates new reviews in my writing style — with honest caveats about its limitations.</div>
     </div>
-    <div class="feature">
+    <div class="feature reveal reveal-delay-7">
       <span class="feature-icon">◉</span>
       <div class="feature-title">Director Deep-Dive</div>
       <div class="feature-desc">Per-director profile with photo, bio, film grid, rating timeline, word cloud of my reviews and head-to-head comparison between directors.</div>
     </div>
-    <div class="feature">
+    <div class="feature reveal reveal-delay-8">
       <span class="feature-icon">▤</span>
       <div class="feature-title">Lists</div>
       <div class="feature-desc">My curated Letterboxd lists with TMDb poster art, ratings and full reviews accessible in a scrollable grid.</div>
@@ -462,32 +505,32 @@
 
 <!-- GALLERY -->
 <section id="gallery">
-  <p class="section-label">gallery</p>
-  <h2 class="section-title">Some of the<br><em>visualisations.</em></h2>
-  <p class="section-desc">
+  <p class="section-label reveal">gallery</p>
+  <h2 class="section-title reveal">Some of the<br><em>visualisations.</em></h2>
+  <p class="section-desc reveal">
     All charts generated with matplotlib and Plotly from my personal data.
   </p>
 
   <div class="gallery">
-    <div class="gallery-item g-wide" style="height:320px">
+    <div class="gallery-item g-wide reveal reveal-delay-1" style="height:320px">
       <img src="images/04_overview.png" alt="Overview stats" loading="lazy"/>
     </div>
-    <div class="gallery-item g-half" style="height:320px">
+    <div class="gallery-item g-half reveal reveal-delay-2" style="height:320px">
       <img src="images/06_directors.png" alt="Director bubble chart" loading="lazy"/>
     </div>
-    <div class="gallery-item g-full" style="height:380px">
+    <div class="gallery-item g-full reveal reveal-delay-3" style="height:380px">
       <img src="images/02_activity_over_time.png" alt="Viewing activity over time" loading="lazy"/>
     </div>
-    <div class="gallery-item g-half" style="height:340px">
+    <div class="gallery-item g-half reveal reveal-delay-4" style="height:340px">
       <img src="images/19_network_visualisation.png" alt="Film network" loading="lazy"/>
     </div>
-    <div class="gallery-item g-half" style="height:340px">
+    <div class="gallery-item g-half reveal reveal-delay-5" style="height:340px">
       <img src="images/26_topology_comparison.png" alt="Network topology comparison" loading="lazy"/>
     </div>
-    <div class="gallery-item g-half" style="height:300px">
+    <div class="gallery-item g-half reveal reveal-delay-6" style="height:300px">
       <img src="images/25_loglog_comparison.png" alt="Log-log degree distribution" loading="lazy"/>
     </div>
-    <div class="gallery-item g-half" style="height:300px">
+    <div class="gallery-item g-half reveal reveal-delay-7" style="height:300px">
       <img src="images/35_semantic_recommendations.png" alt="Semantic recommendations" loading="lazy"/>
     </div>
   </div>
@@ -497,30 +540,30 @@
 
 <!-- STACK -->
 <section id="stack">
-  <p class="section-label">tech stack</p>
-  <h2 class="section-title">Built with<br><em>Python.</em></h2>
-  <p class="section-desc">
+  <p class="section-label reveal">tech stack</p>
+  <h2 class="section-title reveal">Built with<br><em>Python.</em></h2>
+  <p class="section-desc reveal">
     Every component from data fetching to the dashboard is Python,
     with a few carefully chosen libraries.
   </p>
 
   <div class="stack-grid">
-    <span class="stack-tag highlight">Python</span>
-    <span class="stack-tag highlight">Streamlit</span>
-    <span class="stack-tag highlight">Plotly</span>
-    <span class="stack-tag">pandas</span>
-    <span class="stack-tag">NetworkX</span>
-    <span class="stack-tag">UMAP</span>
-    <span class="stack-tag">HDBSCAN</span>
-    <span class="stack-tag">scikit-learn</span>
-    <span class="stack-tag">sentence-transformers</span>
-    <span class="stack-tag">transformers</span>
-    <span class="stack-tag">DistilGPT-2</span>
-    <span class="stack-tag">matplotlib</span>
-    <span class="stack-tag">wordcloud</span>
-    <span class="stack-tag">TMDb API</span>
-    <span class="stack-tag">Letterboxd export</span>
-    <span class="stack-tag">Hugging Face Hub</span>
+    <span class="stack-tag highlight reveal">Python</span>
+    <span class="stack-tag highlight reveal">Streamlit</span>
+    <span class="stack-tag highlight reveal">Plotly</span>
+    <span class="stack-tag reveal">pandas</span>
+    <span class="stack-tag reveal">NetworkX</span>
+    <span class="stack-tag reveal">UMAP</span>
+    <span class="stack-tag reveal">HDBSCAN</span>
+    <span class="stack-tag reveal">scikit-learn</span>
+    <span class="stack-tag reveal">sentence-transformers</span>
+    <span class="stack-tag reveal">transformers</span>
+    <span class="stack-tag reveal">DistilGPT-2</span>
+    <span class="stack-tag reveal">matplotlib</span>
+    <span class="stack-tag reveal">wordcloud</span>
+    <span class="stack-tag reveal">TMDb API</span>
+    <span class="stack-tag reveal">Letterboxd export</span>
+    <span class="stack-tag reveal">Hugging Face Hub</span>
   </div>
 </section>
 
@@ -538,6 +581,56 @@
     <a href="https://cinemaverse.streamlit.app" target="_blank">dashboard</a>
   </div>
 </footer>
+
+<!-- SCROLL REVEAL -->
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+<!-- ANIMATED COUNTERS -->
+<script>
+  function animateCounter(el, target, suffix = '') {
+    const isFloat = target % 1 !== 0;
+    const duration = 1200;
+    const start = performance.now();
+
+    function update(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const current = isFloat
+        ? (target * ease).toFixed(2)
+        : Math.floor(target * ease);
+      el.textContent = current + suffix;
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+
+  const statObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const raw = el.dataset.value;
+        const suffix = el.dataset.suffix || '';
+        const target = parseFloat(raw);
+        animateCounter(el, target, suffix);
+        statObserver.unobserve(el);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('.stat-value').forEach(el => statObserver.observe(el));
+</script>
 
 <!-- LIGHTBOX -->
 <div id="lightbox">
