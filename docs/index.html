@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>cinemaverse — diogocc</title>
+  <title>CinemaVerse — diogocc</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
@@ -143,11 +143,99 @@
       line-height: 1.0;
       color: var(--text);
       margin-bottom: 8px;
+      text-transform: none !important;
     }
     .hero-title em {
       font-style: italic;
       color: var(--gold);
     }
+    .hero-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: rgba(232,201,106,0.08);
+      border: 1px solid rgba(232,201,106,0.2);
+      padding: 6px 16px;
+      border-radius: 20px;
+      margin-bottom: 28px;
+      animation: fadeUp 0.8s ease 0s both;
+    }
+
+    .hero-tagline {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(16px, 2.5vw, 22px);
+      font-style: italic;
+      color: var(--sub);
+      margin-top: 16px;
+      margin-bottom: 8px;
+      line-height: 1.5;
+      animation: fadeUp 0.8s ease 0.35s both;
+    }
+
+    .hero-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin: 24px 0 32px;
+      animation: fadeUp 0.8s ease 0.6s both;
+    }
+    .pill {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      padding: 7px 16px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--sub);
+      letter-spacing: 0.05em;
+      background: var(--bg2);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .pill:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(232,201,106,0.06);
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp 0.8s ease 0.7s both;
+    }
+
+    @keyframes scrollBounce {
+      0%, 100% { transform: translateY(0); opacity: 0.4; }
+      50%       { transform: translateY(8px); opacity: 1; }
+    }
+    .scroll-indicator {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      animation: fadeIn 1s ease 1.2s both;
+    }
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollBounce 2s ease-in-out infinite;
+    }
+    .scroll-indicator span {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
     .hero-sub {
       font-family: 'DM Mono', monospace;
       font-size: 13px;
@@ -442,12 +530,12 @@
 
 <!-- NAV -->
 <nav>
-  <a href="#" class="nav-logo">cinemaverse</a>
+  <a href="#" class="nav-logo">Cinema<span style="color:var(--gold)">Verse</span></a>
   <div class="nav-links">
     <a href="#features">features</a>
     <a href="#gallery">gallery</a>
     <a href="#stack">stack</a>
-    <a href="https://github.com/diogocc45/cinemaverse">github</a>
+    <a href="https://github.com/diogocc45/CinemaVerse">github</a>
   </div>
 </nav>
 
@@ -455,15 +543,15 @@
 <div class="hero">
   <div class="hero-orb3"></div>
   <p class="hero-eyebrow">diogocc · letterboxd data science</p>
-  <h1 class="hero-title">cinema<em>verse</em></h1>
+  <h1 class="hero-title">Cinema<em>Verse</em></h1>
   <p class="hero-sub">
     network science · machine learning · nlp · built from my letterboxd history
   </p>
   <div>
-    <a href="https://cinemaversedcc45.streamlit.app/" class="hero-cta" target="_blank">
+    <a href="https://CinemaVersedcc45.streamlit.app/" class="hero-cta" target="_blank">
       open dashboard →
     </a>
-    <a href="https://github.com/diogoccc45/cinemaverse" class="hero-cta-ghost" target="_blank">
+    <a href="https://github.com/diogoccc45/CinemaVerse" class="hero-cta-ghost" target="_blank">
       view on github
     </a>
   </div>
@@ -621,13 +709,13 @@
 <!-- FOOTER -->
 <footer>
   <div class="footer-left">
-    cinemaverse · diogocc · 2026
+    CinemaVerse · diogocc · 2026
   </div>
   <div class="footer-links">
     <a href="https://letterboxd.com/diogocc" target="_blank">letterboxd</a>
-    <a href="https://github.com/diogocc45/cinemaverse" target="_blank">github</a>
+    <a href="https://github.com/diogocc45/CinemaVerse" target="_blank">github</a>
     <a href="https://huggingface.co/diogocc45/letterboxd-gpt2" target="_blank">hugging face</a>
-    <a href="https://cinemaverse.streamlit.app" target="_blank">dashboard</a>
+    <a href="https://CinemaVerse.streamlit.app" target="_blank">dashboard</a>
   </div>
 </footer>
 
