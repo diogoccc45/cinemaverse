@@ -524,6 +524,126 @@
     .stat-value {
       display: inline-block;
     }
+
+    /* ── PIPELINE ── */
+    .pipeline-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding: 16px 0 32px;
+    }
+    .pipeline-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .pipeline-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      text-align: center;
+      width: 140px;
+      transition: border-color 0.25s, background 0.25s, transform 0.25s;
+      position: relative;
+    }
+    .pipeline-box:hover, .pipeline-box.active {
+      border-color: var(--gold);
+      background: rgba(232,201,106,0.06);
+      transform: translateY(-4px);
+    }
+    .pipeline-icon {
+      font-size: 28px;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .pipeline-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+    .pipeline-desc {
+      font-size: 11px;
+      color: var(--sub);
+      line-height: 1.4;
+    }
+    .pipeline-arrow {
+      font-size: 18px;
+      color: var(--border);
+      flex-shrink: 0;
+      padding: 0 8px;
+      margin-top: -28px;
+    }
+
+    /* Pipeline modal */
+    #pipeline-modal {
+      display: none;
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.85);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    #pipeline-modal.active { display: flex; }
+    .pipeline-modal-box {
+      background: #13131f;
+      border: 1px solid var(--gold);
+      border-radius: 14px;
+      padding: 40px;
+      max-width: 520px;
+      width: 100%;
+      position: relative;
+    }
+    .pipeline-modal-icon { font-size: 40px; margin-bottom: 16px; display: block; }
+    .pipeline-modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .pipeline-modal-sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+    .pipeline-modal-body {
+      font-size: 14px;
+      color: var(--sub);
+      line-height: 1.75;
+    }
+    .pipeline-modal-close {
+      position: absolute; top: 16px; right: 20px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .pipeline-modal-close:hover { color: var(--gold); }
+    .pipeline-tags {
+      display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px;
+    }
+    .pipeline-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--muted);
+    }
   </style>
 </head>
 <body>
@@ -675,6 +795,91 @@
 
 <div class="divider"></div>
 
+<!-- PIPELINE -->
+<section id="pipeline">
+  <p class="section-label reveal">how it works</p>
+  <h2 class="section-title reveal">From export<br><em>to insight.</em></h2>
+  <p class="section-desc reveal">
+    A full data science pipeline built from scratch — click any step to learn more.
+  </p>
+
+  <div class="pipeline-wrapper">
+
+    <div class="pipeline-step reveal" onclick="openPipeline(0)">
+      <div class="pipeline-box" id="pstep-0">
+        <span class="pipeline-icon">📦</span>
+        <div class="pipeline-label">Export</div>
+        <div class="pipeline-desc">Letterboxd raw data</div>
+      </div>
+    </div>
+
+    <div class="pipeline-arrow reveal">→</div>
+
+    <div class="pipeline-step reveal reveal-delay-1" onclick="openPipeline(1)">
+      <div class="pipeline-box" id="pstep-1">
+        <span class="pipeline-icon">🎬</span>
+        <div class="pipeline-label">TMDb API</div>
+        <div class="pipeline-desc">Metadata enrichment</div>
+      </div>
+    </div>
+
+    <div class="pipeline-arrow reveal reveal-delay-1">→</div>
+
+    <div class="pipeline-step reveal reveal-delay-2" onclick="openPipeline(2)">
+      <div class="pipeline-box" id="pstep-2">
+        <span class="pipeline-icon">🔬</span>
+        <div class="pipeline-label">Analysis</div>
+        <div class="pipeline-desc">Networks + EDA</div>
+      </div>
+    </div>
+
+    <div class="pipeline-arrow reveal reveal-delay-2">→</div>
+
+    <div class="pipeline-step reveal reveal-delay-3" onclick="openPipeline(3)">
+      <div class="pipeline-box" id="pstep-3">
+        <span class="pipeline-icon">🤖</span>
+        <div class="pipeline-label">ML</div>
+        <div class="pipeline-desc">Models + embeddings</div>
+      </div>
+    </div>
+
+    <div class="pipeline-arrow reveal reveal-delay-3">→</div>
+
+    <div class="pipeline-step reveal reveal-delay-4" onclick="openPipeline(4)">
+      <div class="pipeline-box" id="pstep-4">
+        <span class="pipeline-icon">✍️</span>
+        <div class="pipeline-label">NLP</div>
+        <div class="pipeline-desc">GPT-2 fine-tuning</div>
+      </div>
+    </div>
+
+    <div class="pipeline-arrow reveal reveal-delay-4">→</div>
+
+    <div class="pipeline-step reveal reveal-delay-5" onclick="openPipeline(5)">
+      <div class="pipeline-box" id="pstep-5">
+        <span class="pipeline-icon">🚀</span>
+        <div class="pipeline-label">Dashboard</div>
+        <div class="pipeline-desc">Streamlit + deploy</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PIPELINE MODAL -->
+<div id="pipeline-modal">
+  <div class="pipeline-modal-box">
+    <span class="pipeline-modal-close" onclick="closePipeline()">✕ close</span>
+    <span class="pipeline-modal-icon" id="pm-icon"></span>
+    <div class="pipeline-modal-title" id="pm-title"></div>
+    <div class="pipeline-modal-sub" id="pm-sub"></div>
+    <div class="pipeline-modal-body" id="pm-body"></div>
+    <div class="pipeline-tags" id="pm-tags"></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
 <!-- STACK -->
 <section id="stack">
   <p class="section-label reveal">tech stack</p>
@@ -767,6 +972,84 @@
   }, { threshold: 0.5 });
 
   document.querySelectorAll('.stat-value').forEach(el => statObserver.observe(el));
+</script>
+
+<!-- PIPELINE JS -->
+<script>
+  const PIPELINE_DATA = [
+    {
+      icon: '📦',
+      title: 'Letterboxd Export',
+      sub: 'Raw data · CSV files',
+      body: `Everything starts with a Letterboxd data export — a ZIP file with CSV files containing my complete watch history: 778 films, 428 reviews, 251 watchlist entries, diary logs and 12 curated lists. This raw data is the foundation of the entire project. No scraping, no third-party tools — just the official export.`,
+      tags: ['ratings.csv', 'reviews.csv', 'watchlist.csv', 'diary.csv', 'lists/']
+    },
+    {
+      icon: '🎬',
+      title: 'TMDb API Enrichment',
+      sub: 'Metadata · 4 scripts',
+      body: `The raw Letterboxd export only has film titles and my ratings — not genres, directors, cast, runtime or country of origin. I built a pipeline of 4 scripts to enrich every film via the TMDb API: fetching genres, directors, cast, production companies, poster images and biographies for every director with 3+ films in my history. The scripts handle rate limiting, caching progress and falling back to TV search for specials and stand-up shows.`,
+      tags: ['02_tmdb_fetch.py', '11b_fetch_posters.py', '11c_fetch_directors.py', 'tmdb_cache.json']
+    },
+    {
+      icon: '🔬',
+      title: 'Analysis & Network Science',
+      sub: 'EDA · NetworkX · Louvain',
+      body: `With enriched data, I ran exploratory analysis across genres, directors, actors, production companies and decades. Then I built a film network where nodes are films and edges connect films sharing directors or actors — and applied Louvain community detection to find clusters. I compared this real network against three theoretical models (Erdős–Rényi, Barabási–Albert and Watts–Strogatz) to understand what type of network my taste forms.`,
+      tags: ['03_analysis.py', '04_advanced.py', '05_network_science.py', '07_network_comparison.py', 'NetworkX', 'Louvain']
+    },
+    {
+      icon: '🤖',
+      title: 'Machine Learning',
+      sub: 'UMAP · HDBSCAN · Random Forest · sentence-transformers',
+      body: `I built three ML systems: (1) a UMAP + HDBSCAN pipeline that projects every film into 2D space and finds taste clusters — the Film Galaxy; (2) a Random Forest rating predictor trained on weighted director, genre, franchise and production company features; (3) a semantic recommendation engine using sentence-transformers to embed film synopses and find films similar to what I loved, solving the cold-start problem the Random Forest couldn't handle.`,
+      tags: ['UMAP', 'HDBSCAN', 'Random Forest', 'sentence-transformers', 'cosine similarity', '09_rating_prediction.ipynb']
+    },
+    {
+      icon: '✍️',
+      title: 'NLP & GPT-2 Fine-tuning',
+      sub: 'DistilGPT-2 · Hugging Face',
+      body: `I fine-tuned DistilGPT-2 on my 417 Letterboxd reviews (first translating Portuguese reviews to English via Google Translate) to generate new reviews in my writing style. The model learns my vocabulary, sentence rhythm and emotional register — though with honest caveats: 417 reviews is a small dataset and the model has no factual knowledge of films, leading to hallucinations. The fine-tuned model is hosted on Hugging Face Hub.`,
+      tags: ['DistilGPT-2', 'transformers', '10a_translate_reviews.py', '10b_finetune_gpt2.ipynb', 'diogocc45/letterboxd-gpt2']
+    },
+    {
+      icon: '🚀',
+      title: 'Dashboard & Deploy',
+      sub: 'Streamlit · GitHub Pages · Streamlit Cloud',
+      body: `Everything is brought together in a Streamlit dashboard with 9 sections: Overview, Exploration, Networks, Galaxy, Recommendations, Predictions, Reviews, Lists and Director Deep-Dive. All processed data is exported to a single data.json file (the only file needed to run the dashboard). The app is deployed on Streamlit Cloud, the model on Hugging Face Hub, and this landing page on GitHub Pages.`,
+      tags: ['Streamlit', 'Plotly', 'data.json', 'Streamlit Cloud', 'GitHub Pages', 'Hugging Face Hub']
+    }
+  ];
+
+  function openPipeline(idx) {
+    const d = PIPELINE_DATA[idx];
+    document.getElementById('pm-icon').textContent  = d.icon;
+    document.getElementById('pm-title').textContent = d.title;
+    document.getElementById('pm-sub').textContent   = d.sub;
+    document.getElementById('pm-body').textContent  = d.body;
+    const tagsEl = document.getElementById('pm-tags');
+    tagsEl.innerHTML = d.tags.map(t =>
+      `<span class="pipeline-tag">${t}</span>`
+    ).join('');
+    document.getElementById('pipeline-modal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    document.querySelectorAll('.pipeline-box').forEach(b => b.classList.remove('active'));
+    document.getElementById(`pstep-${idx}`).classList.add('active');
+  }
+
+  function closePipeline() {
+    document.getElementById('pipeline-modal').classList.remove('active');
+    document.body.style.overflow = '';
+    document.querySelectorAll('.pipeline-box').forEach(b => b.classList.remove('active'));
+  }
+
+  document.getElementById('pipeline-modal').addEventListener('click', e => {
+    if (e.target === document.getElementById('pipeline-modal')) closePipeline();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closePipeline();
+  });
 </script>
 
 <!-- LIGHTBOX -->
