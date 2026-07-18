@@ -1006,19 +1006,13 @@
         <div>
           <div class="director-name">Joachim Trier</div>
           <div class="director-avg">avg 4.57★ · 7 films</div>
+          <div class="director-film" style="margin-top:6px;">
+            Favourite: <strong>Sentimental Value (2025)</strong> ★★★★★<br>
+            <span style="font-size:11px; color:var(--muted);">6 of 7 films rated 4.5★ or above</span>
+          </div>
         </div>
       </div>
-      <div style="display:flex; gap:12px; margin-bottom:16px; align-items:flex-start;">
-        <img src="https://image.tmdb.org/t/p/w300/kLaJEFbEBMT7gNmGWGqoUMFOd3J.jpg"
-             alt="Sentimental Value poster"
-             style="width:80px; border-radius:6px; border:1px solid var(--border); flex-shrink:0;"
-             onerror="this.style.display='none'"/>
-        <div class="director-film">
-          Favourite: <strong>Sentimental Value (2025)</strong> ★★★★★<br>
-          <span style="font-size:12px; color:var(--muted); line-height:1.5; display:block; margin-top:4px;">6 of 7 films rated 4.5★ or above</span>
-        </div>
-      </div>
-      <div class="dyk-hint">↗ click to read my review</div>
+      <div class="dyk-hint">↗ click to read my review & see poster</div>
     </div>
 
     <div class="director-card reveal reveal-delay-1" onclick="openReview('eggers')">
@@ -1030,19 +1024,13 @@
         <div>
           <div class="director-name">Robert Eggers</div>
           <div class="director-avg">avg 4.5★ · 7 films</div>
+          <div class="director-film" style="margin-top:6px;">
+            Favourite: <strong>The Lighthouse (2019)</strong> ★★★★★<br>
+            <span style="font-size:11px; color:var(--muted);">5 of 7 films rated 5★</span>
+          </div>
         </div>
       </div>
-      <div style="display:flex; gap:12px; margin-bottom:16px; align-items:flex-start;">
-        <img src="https://image.tmdb.org/t/p/w300/3nSZHNMXLBL2QtoVdQOCJxWCRLj.jpg"
-             alt="The Lighthouse poster"
-             style="width:80px; border-radius:6px; border:1px solid var(--border); flex-shrink:0;"
-             onerror="this.style.display='none'"/>
-        <div class="director-film">
-          Favourite: <strong>The Lighthouse (2019)</strong> ★★★★★<br>
-          <span style="font-size:12px; color:var(--muted); line-height:1.5; display:block; margin-top:4px;">5 of 7 films rated 5★</span>
-        </div>
-      </div>
-      <div class="dyk-hint">↗ click to read my review</div>
+      <div class="dyk-hint">↗ click to read my review & see poster</div>
     </div>
 
   </div>
@@ -1052,8 +1040,15 @@
 <div id="review-modal">
   <div class="review-modal-box">
     <span class="review-modal-close" onclick="closeReview()">✕ close</span>
-    <div class="review-modal-title" id="rm-title"></div>
-    <div class="review-modal-meta" id="rm-meta"></div>
+    <div style="display:flex; gap:20px; align-items:flex-start; margin-bottom:20px;">
+      <img id="rm-poster" src="" alt="poster"
+           style="width:90px; border-radius:8px; border:1px solid #1e1e2e; flex-shrink:0;"
+           onerror="this.style.display='none'"/>
+      <div>
+        <div class="review-modal-title" id="rm-title"></div>
+        <div class="review-modal-meta" id="rm-meta"></div>
+      </div>
+    </div>
     <div class="review-modal-text" id="rm-text"></div>
   </div>
 </div>
@@ -1503,6 +1498,7 @@
     trier: {
       title: 'Sentimental Value (2025)',
       meta: 'Joachim Trier · ★★★★★ · My favourite film of 2025',
+      poster: 'https://image.tmdb.org/t/p/w300/kLaJEFbEBMT7gNmGWGqoUMFOd3J.jpg',
       text: `🏆 THE 98TH OSCARS PREPARATIONS 🏆
 
 Sorry, Brazil, but I have my pick for Best International Feature. And there's honestly no debate.
@@ -1514,6 +1510,7 @@ This is a film about grief, and family, and the weight of art, and the difficult
     eggers: {
       title: 'The Lighthouse (2019)',
       meta: 'Robert Eggers · ★★★★★',
+      poster: 'https://image.tmdb.org/t/p/w300/3nSZHNMXLBL2QtoVdQOCJxWCRLj.jpg',
       text: `This goes from extremely disturbing to fantastically hilarious in minutes.
 
 Ps: My favourite scene -
@@ -1532,6 +1529,7 @@ That's the trouble with YEEEEEE". HARKKKK, I freaking love it.`
     document.getElementById('rm-title').textContent = r.title;
     document.getElementById('rm-meta').textContent  = r.meta;
     document.getElementById('rm-text').textContent  = r.text;
+    document.getElementById('rm-poster').src = r.poster || '';
     document.getElementById('review-modal').classList.add('active');
     document.body.style.overflow = 'hidden';
   }
