@@ -998,29 +998,49 @@
   <div class="directors-spotlight">
 
     <div class="director-card reveal" onclick="openReview('trier')">
-      <img class="director-photo"
-           src="https://image.tmdb.org/t/p/w300/6gZMbr3Aqkq6EerI2TiOVvwlFJe.jpg"
-           alt="Joachim Trier"
-           onerror="this.style.display='none'"/>
-      <div class="director-name">Joachim Trier</div>
-      <div class="director-avg">avg 4.57★ · 7 films</div>
-      <div class="director-film">
-        Favourite: <strong>Sentimental Value (2025)</strong> ★★★★★<br>
-        <span style="font-size:12px; color:var(--muted)">6 of 7 films rated 4.5★ or above</span>
+      <div style="display:flex; align-items:center; gap:16px; margin-bottom:16px;">
+        <img class="director-photo" style="margin-bottom:0; flex-shrink:0;"
+             src="https://image.tmdb.org/t/p/w300/6gZMbr3Aqkq6EerI2TiOVvwlFJe.jpg"
+             alt="Joachim Trier"
+             onerror="this.style.display='none'"/>
+        <div>
+          <div class="director-name">Joachim Trier</div>
+          <div class="director-avg">avg 4.57★ · 7 films</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:12px; margin-bottom:16px; align-items:flex-start;">
+        <img src="https://image.tmdb.org/t/p/w300/kLaJEFbEBMT7gNmGWGqoUMFOd3J.jpg"
+             alt="Sentimental Value poster"
+             style="width:80px; border-radius:6px; border:1px solid var(--border); flex-shrink:0;"
+             onerror="this.style.display='none'"/>
+        <div class="director-film">
+          Favourite: <strong>Sentimental Value (2025)</strong> ★★★★★<br>
+          <span style="font-size:12px; color:var(--muted); line-height:1.5; display:block; margin-top:4px;">6 of 7 films rated 4.5★ or above</span>
+        </div>
       </div>
       <div class="dyk-hint">↗ click to read my review</div>
     </div>
 
     <div class="director-card reveal reveal-delay-1" onclick="openReview('eggers')">
-      <img class="director-photo"
-           src="https://image.tmdb.org/t/p/w300/8vmXCmVJEJhA1zCwKJZFkrBmXrL.jpg"
-           alt="Robert Eggers"
-           onerror="this.style.display='none'"/>
-      <div class="director-name">Robert Eggers</div>
-      <div class="director-avg">avg 4.5★ · 7 films</div>
-      <div class="director-film">
-        Favourite: <strong>The Lighthouse (2019)</strong> ★★★★★<br>
-        <span style="font-size:12px; color:var(--muted)">5 of 7 films rated 5★</span>
+      <div style="display:flex; align-items:center; gap:16px; margin-bottom:16px;">
+        <img class="director-photo" style="margin-bottom:0; flex-shrink:0;"
+             src="https://image.tmdb.org/t/p/w300/8vmXCmVJEJhA1zCwKJZFkrBmXrL.jpg"
+             alt="Robert Eggers"
+             onerror="this.style.display='none'"/>
+        <div>
+          <div class="director-name">Robert Eggers</div>
+          <div class="director-avg">avg 4.5★ · 7 films</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:12px; margin-bottom:16px; align-items:flex-start;">
+        <img src="https://image.tmdb.org/t/p/w300/3nSZHNMXLBL2QtoVdQOCJxWCRLj.jpg"
+             alt="The Lighthouse poster"
+             style="width:80px; border-radius:6px; border:1px solid var(--border); flex-shrink:0;"
+             onerror="this.style.display='none'"/>
+        <div class="director-film">
+          Favourite: <strong>The Lighthouse (2019)</strong> ★★★★★<br>
+          <span style="font-size:12px; color:var(--muted); line-height:1.5; display:block; margin-top:4px;">5 of 7 films rated 5★</span>
+        </div>
       </div>
       <div class="dyk-hint">↗ click to read my review</div>
     </div>
@@ -1121,6 +1141,167 @@
     <div class="pipeline-modal-body" id="pm-body"></div>
     <div class="pipeline-tags" id="pm-tags"></div>
   </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- NETWORK SCIENCE -->
+<section id="network-science">
+  <p class="section-label reveal">network science</p>
+  <h2 class="section-title reveal">My films form<br><em>a small world.</em></h2>
+  <p class="section-desc reveal">
+    Every film I've watched is a node. Two films connect when they share a director or actor.
+    The result is a network — and it reveals something surprising about my taste.
+  </p>
+
+  <!-- What is a network -->
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:48px;">
+
+    <div class="dyk-card reveal" style="display:flex; flex-direction:column; gap:16px;">
+      <!-- Animated SVG: simple network -->
+      <svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg" style="width:100%; border-radius:8px;">
+        <rect width="280" height="160" fill="#0a0a0f"/>
+        <!-- Edges -->
+        <line x1="140" y1="80" x2="80" y2="40" stroke="#1e1e2e" stroke-width="1.5">
+          <animate attributeName="stroke-opacity" values="0;1;1" dur="2s" fill="freeze"/>
+        </line>
+        <line x1="140" y1="80" x2="200" y2="40" stroke="#1e1e2e" stroke-width="1.5">
+          <animate attributeName="stroke-opacity" values="0;0;1;1" dur="2.5s" fill="freeze"/>
+        </line>
+        <line x1="140" y1="80" x2="80" y2="120" stroke="#1e1e2e" stroke-width="1.5">
+          <animate attributeName="stroke-opacity" values="0;0;0;1" dur="3s" fill="freeze"/>
+        </line>
+        <line x1="140" y1="80" x2="200" y2="120" stroke="#1e1e2e" stroke-width="1.5">
+          <animate attributeName="stroke-opacity" values="0;0;0;0;1" dur="3.5s" fill="freeze"/>
+        </line>
+        <line x1="80" y1="40" x2="200" y2="40" stroke="#1e1e2e" stroke-width="1">
+          <animate attributeName="stroke-opacity" values="0;0;0;0;0;1" dur="4s" fill="freeze"/>
+        </line>
+        <line x1="40" y1="80" x2="80" y2="40" stroke="#1e1e2e" stroke-width="1">
+          <animate attributeName="stroke-opacity" values="0;0;0;0;0;0;1" dur="4.5s" fill="freeze"/>
+        </line>
+        <!-- Nodes -->
+        <circle cx="140" cy="80" r="10" fill="#e8c96a">
+          <animate attributeName="r" values="0;10" dur="0.5s" fill="freeze"/>
+        </circle>
+        <circle cx="80" cy="40" r="7" fill="#00ccaa">
+          <animate attributeName="r" values="0;7" dur="0.3s" begin="1s" fill="freeze"/>
+        </circle>
+        <circle cx="200" cy="40" r="7" fill="#00ccaa">
+          <animate attributeName="r" values="0;7" dur="0.3s" begin="1.5s" fill="freeze"/>
+        </circle>
+        <circle cx="80" cy="120" r="7" fill="#9966ff">
+          <animate attributeName="r" values="0;7" dur="0.3s" begin="2s" fill="freeze"/>
+        </circle>
+        <circle cx="200" cy="120" r="7" fill="#9966ff">
+          <animate attributeName="r" values="0;7" dur="0.3s" begin="2.5s" fill="freeze"/>
+        </circle>
+        <circle cx="40" cy="80" r="5" fill="#444460">
+          <animate attributeName="r" values="0;5" dur="0.3s" begin="3s" fill="freeze"/>
+        </circle>
+        <circle cx="240" cy="80" r="5" fill="#444460">
+          <animate attributeName="r" values="0;5" dur="0.3s" begin="3.2s" fill="freeze"/>
+        </circle>
+        <!-- Labels -->
+        <text x="140" y="100" text-anchor="middle" font-family="DM Mono,monospace" font-size="8" fill="#666680">The Dark Knight</text>
+        <text x="80" y="30" text-anchor="middle" font-family="DM Mono,monospace" font-size="7" fill="#666680">Inception</text>
+        <text x="200" y="30" text-anchor="middle" font-family="DM Mono,monospace" font-size="7" fill="#666680">Interstellar</text>
+        <text x="80" y="140" text-anchor="middle" font-family="DM Mono,monospace" font-size="7" fill="#666680">Memento</text>
+        <text x="200" y="140" text-anchor="middle" font-family="DM Mono,monospace" font-size="7" fill="#666680">Oppenheimer</text>
+      </svg>
+      <div>
+        <div class="dyk-label">what is a network?</div>
+        <div class="dyk-desc" style="font-size:13px;">Each film is a <strong style="color:var(--text)">node</strong>. Two films connect when they share a director or actor — like Inception and The Dark Knight both directed by Nolan. I built this network across all 778 films I've watched.</div>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <!-- Key metrics -->
+      <div class="dyk-card reveal reveal-delay-1" style="padding:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline;">
+          <div>
+            <div class="dyk-label">small-world sigma</div>
+            <div class="dyk-number" style="color:#e8c96a; font-size:40px;">13.5</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-family:'DM Mono',monospace; font-size:9px; color:var(--muted);">THRESHOLD</div>
+            <div style="font-family:'Playfair Display',serif; font-size:28px; color:var(--muted);">1.0</div>
+          </div>
+        </div>
+        <div class="dyk-desc" style="font-size:12px; margin-top:8px;">Sigma &gt; 1 means small-world. Mine is 13.5× above the threshold — exceptionally high. Most real networks score between 1 and 5.</div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div class="dyk-card reveal reveal-delay-2" style="padding:16px;">
+          <div class="dyk-label">clustering</div>
+          <div class="dyk-number" style="color:#00ccaa; font-size:32px;">0.776</div>
+          <div class="dyk-desc" style="font-size:11px; margin-top:4px;">Films I watch tend to cluster tightly — if I like director A and director B, they likely worked with the same actors.</div>
+        </div>
+        <div class="dyk-card reveal reveal-delay-3" style="padding:16px;">
+          <div class="dyk-label">avg path length</div>
+          <div class="dyk-number" style="color:#9966ff; font-size:32px;">3.69</div>
+          <div class="dyk-desc" style="font-size:11px; margin-top:4px;">Any two films in my history connect through just 3.7 hops. Cinema's version of six degrees of separation.</div>
+        </div>
+      </div>
+
+      <div class="dyk-card reveal reveal-delay-4" style="padding:16px; border-color:rgba(232,201,106,0.3); background:rgba(232,201,106,0.04);">
+        <div class="dyk-label" style="color:var(--gold);">verdict</div>
+        <div class="dyk-desc" style="font-size:13px;"><strong style="color:var(--text);">My taste network is a strong small-world.</strong> Highly clustered like Watts-Strogatz, but with the long-range connections of Barabási-Albert. My watching habits are neither random nor purely tribal — they form a rich, interconnected web.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 model comparison — real images -->
+  <p class="section-label reveal" style="margin-bottom:16px;">comparing network models</p>
+  <p class="dyk-desc reveal" style="margin-bottom:24px;">I generated three synthetic networks with the same parameters as mine and compared their topology. Click any card to see the real output.</p>
+
+  <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px;">
+
+    <div class="dyk-card reveal" style="padding:16px; border-color:var(--gold); cursor:zoom-in;" onclick="openNetModal('images/my_network.png','My Film Network','σ = 13.5 · C = 0.776 · L = 3.69 · 509 nodes')">
+      <div style="font-family:'DM Mono',monospace; font-size:9px; color:var(--gold); letter-spacing:0.12em; margin-bottom:8px;">MY NETWORK ↗</div>
+      <img src="images/my_network.png" style="width:100%; border-radius:6px; margin-bottom:8px;" loading="lazy"/>
+      <div style="font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); line-height:1.6;">σ = 13.5 · C = 0.776<br>L = 3.69 · 509 nodes</div>
+      <div style="font-size:11px; color:var(--sub); margin-top:6px;">Dense clusters with bridges — the hallmark of a real taste network.</div>
+    </div>
+
+    <div class="dyk-card reveal reveal-delay-1" style="padding:16px; cursor:zoom-in;" onclick="openNetModal('images/erdos_renyi.png','Erdős–Rényi (random)','σ = 1.1 · C = 0.039 · L = 2.42 · random graph')">
+      <div style="font-family:'DM Mono',monospace; font-size:9px; color:#4488ff; letter-spacing:0.12em; margin-bottom:8px;">ERDŐS–RÉNYI ↗</div>
+      <img src="images/erdos_renyi.png" style="width:100%; border-radius:6px; margin-bottom:8px;" loading="lazy"/>
+      <div style="font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); line-height:1.6;">σ = 1.1 · C = 0.039<br>L = 2.42 · random</div>
+      <div style="font-size:11px; color:var(--sub); margin-top:6px;">Every pair connects with equal probability. No clusters, no hubs — pure chance.</div>
+    </div>
+
+    <div class="dyk-card reveal reveal-delay-2" style="padding:16px; cursor:zoom-in;" onclick="openNetModal('images/barabasi.png','Barabási–Albert (scale-free)','σ = 2.9 · C = 0.100 · L = 2.36 · preferential attachment')">
+      <div style="font-family:'DM Mono',monospace; font-size:9px; color:#e84040; letter-spacing:0.12em; margin-bottom:8px;">BARABÁSI–ALBERT ↗</div>
+      <img src="images/barabasi.png" style="width:100%; border-radius:6px; margin-bottom:8px;" loading="lazy"/>
+      <div style="font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); line-height:1.6;">σ = 2.9 · C = 0.100<br>L = 2.36 · scale-free</div>
+      <div style="font-size:11px; color:var(--sub); margin-top:6px;">Rich get richer — new nodes prefer connecting to already popular hubs.</div>
+    </div>
+
+    <div class="dyk-card reveal reveal-delay-3" style="padding:16px; cursor:zoom-in;" onclick="openNetModal('images/watts.png','Watts–Strogatz (small-world)','σ = 11.6 · C = 0.517 · L = 2.87 · rewired ring lattice')">
+      <div style="font-family:'DM Mono',monospace; font-size:9px; color:#00c030; letter-spacing:0.12em; margin-bottom:8px;">WATTS–STROGATZ ↗</div>
+      <img src="images/watts.png" style="width:100%; border-radius:6px; margin-bottom:8px;" loading="lazy"/>
+      <div style="font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); line-height:1.6;">σ = 11.6 · C = 0.517<br>L = 2.87 · small-world</div>
+      <div style="font-size:11px; color:var(--sub); margin-top:6px;">A ring with random shortcuts. High clustering + short paths.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- NETWORK IMAGE MODAL -->
+<div id="net-modal" style="display:none; position:fixed; inset:0; z-index:1000;
+     background:rgba(0,0,0,0.92); align-items:center; justify-content:center;
+     flex-direction:column; padding:24px; gap:16px;">
+  <div style="display:flex; justify-content:space-between; width:100%; max-width:900px; align-items:baseline;">
+    <div>
+      <div style="font-family:'Playfair Display',serif; font-size:20px; color:#e8e8f0;" id="nm-title"></div>
+      <div style="font-family:'DM Mono',monospace; font-size:10px; color:#e8c96a; margin-top:4px;" id="nm-meta"></div>
+    </div>
+    <span onclick="closeNetModal()" style="font-family:'DM Mono',monospace; font-size:12px;
+          color:#666680; cursor:pointer; letter-spacing:0.1em;">✕ close</span>
+  </div>
+  <img id="nm-img" src="" style="max-width:900px; max-height:80vh; width:100%;
+       object-fit:contain; border-radius:8px; border:1px solid #1e1e2e;"/>
 </div>
 
 <div class="divider"></div>
@@ -1294,6 +1475,25 @@
 
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closePipeline();
+  });
+</script>
+
+<!-- NETWORK MODAL JS -->
+<script>
+  function openNetModal(src, title, meta) {
+    document.getElementById('nm-img').src   = src;
+    document.getElementById('nm-title').textContent = title;
+    document.getElementById('nm-meta').textContent  = meta;
+    const modal = document.getElementById('net-modal');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+  function closeNetModal() {
+    document.getElementById('net-modal').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+  document.getElementById('net-modal').addEventListener('click', e => {
+    if (e.target === document.getElementById('net-modal')) closeNetModal();
   });
 </script>
 
