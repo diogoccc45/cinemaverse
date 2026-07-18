@@ -644,6 +644,151 @@
       border-radius: 4px;
       color: var(--muted);
     }
+
+    /* ── DID YOU KNOW ── */
+    .dyk-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .dyk-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .dyk-card:hover {
+      border-color: var(--muted);
+      transform: translateY(-2px);
+    }
+    .dyk-card.clickable { cursor: pointer; }
+    .dyk-card.clickable:hover { border-color: var(--gold); }
+    .dyk-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 48px;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .dyk-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .dyk-desc {
+      font-size: 14px;
+      color: var(--sub);
+      line-height: 1.6;
+    }
+    .dyk-hint {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      color: var(--muted);
+      margin-top: 12px;
+      letter-spacing: 0.08em;
+    }
+
+    /* Directors spotlight */
+    .directors-spotlight {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .director-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .director-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-2px);
+    }
+    .director-photo {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--border);
+      margin-bottom: 14px;
+    }
+    .director-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .director-avg {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .director-film {
+      font-size: 13px;
+      color: var(--sub);
+    }
+    .director-film strong { color: var(--text); }
+
+    /* Review modal */
+    #review-modal {
+      display: none;
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.88);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    #review-modal.active { display: flex; }
+    .review-modal-box {
+      background: #13131f;
+      border: 1px solid var(--gold);
+      border-radius: 14px;
+      padding: 40px;
+      max-width: 560px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    .review-modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .review-modal-meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      margin-bottom: 20px;
+    }
+    .review-modal-text {
+      font-size: 14px;
+      color: var(--sub);
+      line-height: 1.8;
+      font-style: italic;
+      white-space: pre-line;
+    }
+    .review-modal-close {
+      position: absolute; top: 16px; right: 20px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .review-modal-close:hover { color: var(--gold); }
   </style>
 </head>
 <body>
@@ -792,6 +937,106 @@
     </div>
   </div>
 </section>
+
+<div class="divider"></div>
+
+<!-- DID YOU KNOW -->
+<section id="did-you-know">
+  <p class="section-label reveal">did you know?</p>
+  <h2 class="section-title reveal">By the<br><em>numbers.</em></h2>
+  <p class="section-desc reveal">
+    Some facts about my watch history that surprised even me.
+  </p>
+
+  <div class="dyk-grid">
+
+    <div class="dyk-card reveal">
+      <div class="dyk-number" style="color:#e8c96a">57.4</div>
+      <div class="dyk-label">days of film</div>
+      <div class="dyk-desc">That's how long it would take to watch every film I've logged back-to-back, without sleeping.</div>
+    </div>
+
+    <div class="dyk-card reveal reveal-delay-1">
+      <div class="dyk-number" style="color:#00c030">46</div>
+      <div class="dyk-label">films in one month</div>
+      <div class="dyk-desc">April 2025 was my peak — I watched 46 films in a single month. That's more than one a day.</div>
+    </div>
+
+    <div class="dyk-card reveal reveal-delay-2">
+      <div class="dyk-number" style="color:#00ccaa">109</div>
+      <div class="dyk-label">five-star films</div>
+      <div class="dyk-desc">Out of 778 films, 109 earned a perfect 5★ — that's 14%. I'm generous with masterpieces.</div>
+    </div>
+
+    <div class="dyk-card reveal reveal-delay-3">
+      <div class="dyk-number" style="color:#9966ff">428</div>
+      <div class="dyk-label">reviews written</div>
+      <div class="dyk-desc">More than half of everything I've watched has a written review. Average length: 630 characters.</div>
+    </div>
+
+    <div class="dyk-card reveal reveal-delay-4">
+      <div class="dyk-number" style="color:#e84040">30</div>
+      <div class="dyk-label">half-star films</div>
+      <div class="dyk-desc">Only 30 films got 0.5★ — the lowest possible rating. I rarely hate things, but when I do...</div>
+    </div>
+
+    <div class="dyk-card reveal reveal-delay-5">
+      <div class="dyk-number" style="color:#4488ff">308</div>
+      <div class="dyk-label">drama films</div>
+      <div class="dyk-desc">Drama is my most watched genre by far — nearly 40% of everything I've seen. But Animation has my highest avg rating.</div>
+    </div>
+
+  </div>
+
+  <!-- Directors spotlight -->
+  <p class="section-label reveal" style="margin-top:48px;">my favourite directors</p>
+  <p class="section-desc reveal">
+    The data says Bo Burnham — but in my heart, it's always been these two.
+    Click to read my favourite review of each.
+  </p>
+
+  <div class="directors-spotlight">
+
+    <div class="director-card reveal" onclick="openReview('trier')">
+      <img class="director-photo"
+           src="https://image.tmdb.org/t/p/w300/6gZMbr3Aqkq6EerI2TiOVvwlFJe.jpg"
+           alt="Joachim Trier"
+           onerror="this.style.display='none'"/>
+      <div class="director-name">Joachim Trier</div>
+      <div class="director-avg">avg 4.57★ · 7 films</div>
+      <div class="director-film">
+        Favourite: <strong>Sentimental Value (2025)</strong> ★★★★★<br>
+        <span style="font-size:12px; color:var(--muted)">6 of 7 films rated 4.5★ or above</span>
+      </div>
+      <div class="dyk-hint">↗ click to read my review</div>
+    </div>
+
+    <div class="director-card reveal reveal-delay-1" onclick="openReview('eggers')">
+      <img class="director-photo"
+           src="https://image.tmdb.org/t/p/w300/8vmXCmVJEJhA1zCwKJZFkrBmXrL.jpg"
+           alt="Robert Eggers"
+           onerror="this.style.display='none'"/>
+      <div class="director-name">Robert Eggers</div>
+      <div class="director-avg">avg 4.5★ · 7 films</div>
+      <div class="director-film">
+        Favourite: <strong>The Lighthouse (2019)</strong> ★★★★★<br>
+        <span style="font-size:12px; color:var(--muted)">5 of 7 films rated 5★</span>
+      </div>
+      <div class="dyk-hint">↗ click to read my review</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- REVIEW MODAL -->
+<div id="review-modal">
+  <div class="review-modal-box">
+    <span class="review-modal-close" onclick="closeReview()">✕ close</span>
+    <div class="review-modal-title" id="rm-title"></div>
+    <div class="review-modal-meta" id="rm-meta"></div>
+    <div class="review-modal-text" id="rm-text"></div>
+  </div>
+</div>
 
 <div class="divider"></div>
 
@@ -1049,6 +1294,55 @@
 
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closePipeline();
+  });
+</script>
+
+<!-- REVIEW MODAL JS -->
+<script>
+  const REVIEWS = {
+    trier: {
+      title: 'Sentimental Value (2025)',
+      meta: 'Joachim Trier · ★★★★★ · My favourite film of 2025',
+      text: `🏆 THE 98TH OSCARS PREPARATIONS 🏆
+
+Sorry, Brazil, but I have my pick for Best International Feature. And there's honestly no debate.
+
+I was rereading my Marty Supreme review and it actually made me laugh - at a moment when I truly don't know what to say about this film, a moment where the tears flow freely and my hands shake a little. I don't know how to put into words what Joachim Trier did here, and I've been trying to write this review for a few days. I need to try though.
+
+This is a film about grief, and family, and the weight of art, and the difficulty of loving someone and letting them go. It's quietly devastating in ways I didn't expect. Renate Reinsve is extraordinary - again. Anders Danielsen Lie is extraordinary - again. And Trier holds it all with such patience and such tenderness that by the end I felt like I'd lived through something real.`
+    },
+    eggers: {
+      title: 'The Lighthouse (2019)',
+      meta: 'Robert Eggers · ★★★★★',
+      text: `This goes from extremely disturbing to fantastically hilarious in minutes.
+
+Ps: My favourite scene -
+"What?
+What?
+What?
+That's what I mean!
+What?
+That's the trouble with you!
+That's the trouble with YEEEEEE". HARKKKK, I freaking love it.`
+    }
+  };
+
+  function openReview(key) {
+    const r = REVIEWS[key];
+    document.getElementById('rm-title').textContent = r.title;
+    document.getElementById('rm-meta').textContent  = r.meta;
+    document.getElementById('rm-text').textContent  = r.text;
+    document.getElementById('review-modal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeReview() {
+    document.getElementById('review-modal').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('review-modal').addEventListener('click', e => {
+    if (e.target === document.getElementById('review-modal')) closeReview();
   });
 </script>
 
