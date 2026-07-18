@@ -1043,7 +1043,7 @@
     <div style="display:flex; gap:20px; align-items:flex-start; margin-bottom:20px;">
       <img id="rm-poster" src="" alt="poster"
            style="width:90px; border-radius:8px; border:1px solid #1e1e2e; flex-shrink:0;"
-           onerror="this.style.display='none'"/>
+           onerror="this.style.opacity='0'"/>
       <div>
         <div class="review-modal-title" id="rm-title"></div>
         <div class="review-modal-meta" id="rm-meta"></div>
@@ -1529,7 +1529,9 @@ That's the trouble with YEEEEEE". HARKKKK, I freaking love it.`
     document.getElementById('rm-title').textContent = r.title;
     document.getElementById('rm-meta').textContent  = r.meta;
     document.getElementById('rm-text').textContent  = r.text;
-    document.getElementById('rm-poster').src = r.poster || '';
+    const posterEl = document.getElementById('rm-poster');
+    posterEl.style.opacity = '1';
+    posterEl.src = r.poster || '';
     document.getElementById('review-modal').classList.add('active');
     document.body.style.overflow = 'hidden';
   }
