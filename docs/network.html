@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Network Science — CinemaVerse</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:   #e8c96a;
+      --green:  #00c030;
+      --teal:   #00ccaa;
+      --blue:   #4488ff;
+      --red:    #e84040;
+      --purple: #9966ff;
+      --bg:     #0a0a0f;
+      --bg2:    #111118;
+      --border: #1e1e2e;
+      --muted:  #444460;
+      --text:   #e8e8f0;
+      --sub:    #666680;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; line-height: 1.6; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px; height: 56px;
+      background: rgba(10,10,15,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 900; color: var(--gold); text-decoration: none; }
+    .nav-links { display: flex; gap: 32px; }
+    .nav-links a { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+
+    /* LAYOUT */
+    .page { max-width: 1100px; margin: 0 auto; padding: 96px 24px 80px; }
+
+    /* HERO */
+    .hero {
+      padding: 80px 0 60px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 80px;
+    }
+    .hero-eyebrow { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; }
+    .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(40px, 6vw, 72px); font-weight: 900; line-height: 1.05; margin-bottom: 20px; }
+    .hero-title em { font-style: italic; color: var(--gold); }
+    .hero-desc { font-size: 16px; color: var(--sub); max-width: 600px; line-height: 1.75; }
+
+    /* SIGMA HERO */
+    .sigma-block {
+      display: flex; align-items: baseline; gap: 16px;
+      margin: 40px 0 0;
+    }
+    .sigma-number { font-family: 'Playfair Display', serif; font-size: 96px; font-weight: 900; color: var(--gold); line-height: 1; }
+    .sigma-label { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); letter-spacing: 0.12em; }
+    .sigma-threshold { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--sub); margin-top: 8px; }
+    .sigma-threshold span { color: var(--gold); }
+
+    /* SECTION */
+    .section { margin-bottom: 80px; }
+    .section-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; line-height: 1.1; margin-bottom: 16px; }
+    .section-title em { font-style: italic; color: var(--gold); }
+    .section-desc { font-size: 15px; color: var(--sub); max-width: 680px; line-height: 1.75; margin-bottom: 32px; }
+
+    /* METRIC CARDS */
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 32px; }
+    .metric-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 24px; }
+    .metric-value { font-family: 'Playfair Display', serif; font-size: 40px; font-weight: 700; line-height: 1; margin-bottom: 6px; }
+    .metric-name { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .metric-desc { font-size: 12px; color: var(--sub); line-height: 1.55; }
+
+    /* COMPARISON TABLE */
+    .compare-table { width: 100%; border-collapse: collapse; margin-bottom: 32px; }
+    .compare-table th {
+      font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 12px 16px; text-align: left;
+      border-bottom: 1px solid var(--border); color: var(--muted);
+    }
+    .compare-table td { padding: 12px 16px; font-size: 13px; color: var(--sub); border-bottom: 1px solid rgba(30,30,46,0.5); }
+    .compare-table tr:hover td { background: #13131f; }
+    .compare-table .highlight td { color: var(--text); }
+    .compare-table .highlight td:first-child { color: var(--gold); font-weight: 500; }
+    .val-good { color: var(--green) !important; font-weight: 500; }
+    .val-gold { color: var(--gold) !important; font-weight: 500; }
+
+    /* MODEL CARDS */
+    .models-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 32px; }
+    .model-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; cursor: zoom-in; transition: border-color 0.2s, transform 0.2s; }
+    .model-card:hover { border-color: var(--muted); transform: translateY(-2px); }
+    .model-card.gold { border-color: rgba(232,201,106,0.4); }
+    .model-card.gold:hover { border-color: var(--gold); }
+    .model-card img { width: 100%; display: block; }
+    .model-card-body { padding: 16px 20px; }
+    .model-card-title { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+    .model-card-meta { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 8px; }
+    .model-card-desc { font-size: 13px; color: var(--sub); line-height: 1.6; }
+
+    /* FULL WIDTH IMAGE */
+    .full-img { width: 100%; border-radius: 10px; border: 1px solid var(--border); cursor: zoom-in; transition: opacity 0.2s; margin-bottom: 16px; }
+    .full-img:hover { opacity: 0.9; }
+
+    /* VERDICT */
+    .verdict { background: rgba(232,201,106,0.05); border: 1px solid rgba(232,201,106,0.25); border-radius: 12px; padding: 32px; margin-bottom: 32px; }
+    .verdict-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+    .verdict-text { font-size: 15px; color: var(--sub); line-height: 1.75; }
+
+    /* REVEAL */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+
+    /* MODAL */
+    #img-modal {
+      display: none; position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.92); align-items: center; justify-content: center;
+      flex-direction: column; padding: 24px; gap: 16px;
+    }
+    #img-modal.active { display: flex; }
+    #img-modal img { max-width: 1000px; max-height: 85vh; width: 100%; object-fit: contain; border-radius: 8px; }
+    #img-modal-close { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); cursor: pointer; align-self: flex-end; margin-right: 8px; letter-spacing: 0.1em; transition: color 0.2s; }
+    #img-modal-close:hover { color: var(--gold); }
+    #img-modal-title { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--gold); align-self: flex-start; letter-spacing: 0.1em; }
+
+    /* DIVIDER */
+    .divider { height: 1px; background: var(--border); margin: 0 0 80px; }
+
+    /* BACK LINK */
+    .back-link { display: inline-flex; align-items: center; gap: 8px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: var(--muted); text-decoration: none; transition: color 0.2s; margin-bottom: 40px; }
+    .back-link:hover { color: var(--gold); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Cinema<span style="color:var(--gold)">Verse</span></a>
+  <div class="nav-links">
+    <a href="index.html">home</a>
+    <a href="network.html" class="active">network science</a>
+    <a href="https://cinemaversedcc45.streamlit.app" target="_blank">dashboard</a>
+    <a href="https://github.com/diogoccc45/cinemaverse" target="_blank">github</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <a href="index.html" class="back-link">← back to home</a>
+
+  <!-- HERO -->
+  <div class="hero">
+    <p class="hero-eyebrow">network science · graph theory · community detection</p>
+    <h1 class="hero-title">My films form<br>a <em>small world.</em></h1>
+    <p class="hero-desc">
+      Every film I've watched is a node. Two films connect when they share a director or actor.
+      The result is a network — and its properties reveal something remarkable about my taste.
+    </p>
+    <div class="sigma-block">
+      <div>
+        <div class="sigma-number">13.5</div>
+        <div class="sigma-label">SMALL-WORLD SIGMA (σ)</div>
+        <div class="sigma-threshold">threshold for small-world: σ &gt; <span>1.0</span> · mine is 13.5× above it</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KEY METRICS -->
+  <div class="section reveal">
+    <p class="section-label">key metrics</p>
+    <h2 class="section-title">The <em>numbers.</em></h2>
+    <p class="section-desc">Four metrics characterise the structure of my film network. Together they tell a consistent story: this is an unusually well-connected, highly clustered graph.</p>
+
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-value" style="color:var(--gold)">13.5</div>
+        <div class="metric-name">Small-World Sigma (σ)</div>
+        <div class="metric-desc">σ = (C/C_rand) / (L/L_rand). A value above 1 indicates small-world properties. Mine is 13.5 — exceptionally high. Most real-world networks score between 1 and 5.</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value" style="color:var(--teal)">0.776</div>
+        <div class="metric-name">Clustering Coefficient (C)</div>
+        <div class="metric-desc">The probability that two neighbours of a node are also connected to each other. 0.776 means my film clusters are extremely dense — films I watch tend to share directors and actors with each other.</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value" style="color:var(--purple)">3.69</div>
+        <div class="metric-name">Avg Path Length (L)</div>
+        <div class="metric-desc">The average number of hops between any two films in the network. 3.69 means any two films I've watched connect through fewer than 4 steps — cinema's version of six degrees of separation.</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value" style="color:var(--blue)">10</div>
+        <div class="metric-name">Diameter</div>
+        <div class="metric-desc">The longest shortest path in the network. Despite 509 nodes and 5,131 edges, no two films are more than 10 hops apart — a sign of a tightly connected graph.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- MODEL COMPARISON -->
+  <div class="section reveal">
+    <p class="section-label">theoretical models</p>
+    <h2 class="section-title">Compared to <em>synthetic networks.</em></h2>
+    <p class="section-desc">
+      To understand what type of network my taste forms, I generated three synthetic networks
+      with the same number of nodes (509) and edges (5,131) and compared their properties.
+      Each model represents a different theory of how networks grow.
+    </p>
+
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Network</th>
+          <th>σ (sigma)</th>
+          <th>C (clustering)</th>
+          <th>L (path length)</th>
+          <th>Max degree</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight">
+          <td>My Film Network</td>
+          <td class="val-gold">13.5</td>
+          <td class="val-gold">0.776</td>
+          <td>3.69</td>
+          <td>119</td>
+          <td class="val-gold">Strong small-world</td>
+        </tr>
+        <tr>
+          <td>Erdős–Rényi</td>
+          <td>1.1</td>
+          <td>0.039</td>
+          <td class="val-good">2.42</td>
+          <td>38</td>
+          <td>Random</td>
+        </tr>
+        <tr>
+          <td>Barabási–Albert</td>
+          <td>2.9</td>
+          <td>0.100</td>
+          <td class="val-good">2.36</td>
+          <td>286</td>
+          <td>Scale-free</td>
+        </tr>
+        <tr>
+          <td>Watts–Strogatz</td>
+          <td>11.6</td>
+          <td>0.517</td>
+          <td>2.87</td>
+          <td>34</td>
+          <td>Small-world</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="models-grid">
+      <div class="model-card gold" onclick="openModal('images/my_network.png','My Film Network — σ=13.5 · C=0.776 · L=3.69')">
+        <img src="images/my_network.png" loading="lazy" alt="My Film Network"/>
+        <div class="model-card-body">
+          <div class="model-card-title" style="color:var(--gold)">My Film Network ↗</div>
+          <div class="model-card-meta">σ = 13.5 · C = 0.776 · L = 3.69 · 509 nodes · 5131 edges</div>
+          <div class="model-card-desc">Dense clusters with inter-cluster bridges. Node size = PageRank. Colour = Louvain community. The large dense core reflects my mainstream taste; peripheral nodes are niche discoveries.</div>
+        </div>
+      </div>
+      <div class="model-card" onclick="openModal('images/erdos_renyi.png','Erdős–Rényi — σ=1.1 · C=0.039 · L=2.42')">
+        <img src="images/erdos_renyi.png" loading="lazy" alt="Erdős–Rényi"/>
+        <div class="model-card-body">
+          <div class="model-card-title" style="color:var(--blue)">Erdős–Rényi (random) ↗</div>
+          <div class="model-card-meta">σ = 1.1 · C = 0.039 · L = 2.42 · p = 0.0397</div>
+          <div class="model-card-desc">Each pair of nodes connects with equal probability p. The result is a structureless random graph — low clustering, no hubs, Poisson degree distribution. The baseline against which all real networks are compared.</div>
+        </div>
+      </div>
+      <div class="model-card" onclick="openModal('images/barabasi.png','Barabási–Albert — σ=2.9 · C=0.100 · L=2.36')">
+        <img src="images/barabasi.png" loading="lazy" alt="Barabási–Albert"/>
+        <div class="model-card-body">
+          <div class="model-card-title" style="color:var(--red)">Barabási–Albert (scale-free) ↗</div>
+          <div class="model-card-meta">σ = 2.9 · C = 0.100 · L = 2.36 · m = 10</div>
+          <div class="model-card-desc">New nodes attach preferentially to already well-connected nodes — "rich get richer". Produces massive hubs (max degree 286) and a power-law degree distribution. Models the internet, citation networks and social media.</div>
+        </div>
+      </div>
+      <div class="model-card" onclick="openModal('images/watts.png','Watts–Strogatz — σ=11.6 · C=0.517 · L=2.87')">
+        <img src="images/watts.png" loading="lazy" alt="Watts–Strogatz"/>
+        <div class="model-card-body">
+          <div class="model-card-title" style="color:var(--green)">Watts–Strogatz (small-world) ↗</div>
+          <div class="model-card-meta">σ = 11.6 · C = 0.517 · L = 2.87 · k = 20 · p = 0.1</div>
+          <div class="model-card-desc">Starts as a regular ring lattice, then randomly rewires 10% of edges. The rewiring creates long-range shortcuts that dramatically reduce path length while preserving high clustering — the classic small-world recipe.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- LOG-LOG -->
+  <div class="section reveal">
+    <p class="section-label">degree distribution</p>
+    <h2 class="section-title">Is my network <em>scale-free?</em></h2>
+    <p class="section-desc">
+      A scale-free network follows a power-law degree distribution — a straight line in log-log space.
+      This means a small number of "hub" films connect to many others, while most films connect to few.
+      The Barabási–Albert model is the canonical example.
+    </p>
+
+    <img src="images/25_loglog_comparison.png" class="full-img" loading="lazy"
+         alt="Log-log degree distribution" onclick="openModal('images/25_loglog_comparison.png','Log-Log Degree Distribution — Scale-Free Check')"/>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:24px;">
+      <div class="metric-card">
+        <div class="metric-name">What a straight line means</div>
+        <div class="metric-desc" style="margin-top:8px;">In log-log space, a power law P(k) ~ k^(-γ) appears as a straight line with negative slope. The Barabási–Albert model (red) shows the clearest linear trend — confirming its scale-free nature.</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-name">My network's distribution</div>
+        <div class="metric-desc" style="margin-top:8px;">My network (gold) doesn't follow a clean power law — it has a flatter distribution at high degrees, suggesting a mix of preferential attachment and community structure. It's not purely scale-free, but it has hubs.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- LOUVAIN COMMUNITIES -->
+  <div class="section reveal">
+    <p class="section-label">community detection</p>
+    <h2 class="section-title">Louvain <em>communities.</em></h2>
+    <p class="section-desc">
+      The Louvain algorithm finds densely connected groups within the network by maximising modularity —
+      a measure of how much more connected nodes within a community are compared to a random graph.
+      Applied to my film network, it reveals the genre and director clusters that structure my taste.
+    </p>
+
+    <img src="images/19_network_visualisation.png" class="full-img" loading="lazy"
+         alt="Film network with Louvain communities" onclick="openModal('images/19_network_visualisation.png','My Film Network — Louvain Community Detection')"/>
+
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:24px;">
+      <div class="metric-card">
+        <div class="metric-value" style="color:var(--gold); font-size:32px;">7</div>
+        <div class="metric-name">Communities found</div>
+        <div class="metric-desc">Louvain identified 7 distinct communities in my network. The two largest are Drama-dominated, while smaller ones cluster around Action, Comedy and Science Fiction.</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value" style="color:var(--teal); font-size:32px;">84</div>
+        <div class="metric-name">Largest community</div>
+        <div class="metric-desc">The biggest community has 84 films, predominantly Drama with an avg rating of 3.0 — my mainstream cluster, dominated by films sharing major studio actors.</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value" style="color:var(--purple); font-size:32px;">PageRank</div>
+        <div class="metric-name">Node size</div>
+        <div class="metric-desc">Node size reflects PageRank centrality — films that connect to many other well-connected films. The largest nodes are typically blockbusters with large ensemble casts.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- VERDICT -->
+  <div class="section reveal">
+    <p class="section-label">conclusion</p>
+    <h2 class="section-title">What this says about <em>my taste.</em></h2>
+
+    <div class="verdict">
+      <div class="verdict-title">A strong small-world network — with a twist.</div>
+      <div class="verdict-text">
+        My film network has a sigma of 13.5 — 13.5 times above the small-world threshold,
+        and higher than the Watts–Strogatz model itself. This means my taste is
+        simultaneously highly clustered (I return to the same directors, actors and genres)
+        and globally well-connected (any two films link in fewer than 4 steps).
+        <br><br>
+        The clustering coefficient of 0.776 is particularly telling: when I watch a film,
+        the other films I've watched that share its director or lead actor are very likely
+        to also share directors or actors with each other. My taste forms tight, coherent
+        communities — not random exploration.
+        <br><br>
+        The 7 Louvain communities reflect real genre and director groupings rather than
+        random clusters, and the degree distribution suggests hubs (blockbusters with large casts)
+        without being fully scale-free. My network is most similar to Watts–Strogatz —
+        the small-world model — but with higher clustering and a richer community structure.
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:48px;">
+      <a href="https://cinemaversedcc45.streamlit.app" target="_blank"
+         style="display:inline-flex; align-items:center; gap:10px; padding:14px 32px;
+                background:var(--gold); color:#0a0a0f; font-family:'DM Mono',monospace;
+                font-size:12px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase;
+                text-decoration:none; border-radius:4px;">
+        explore the interactive network →
+      </a>
+      <a href="index.html"
+         style="display:inline-flex; align-items:center; gap:10px; padding:14px 32px;
+                background:transparent; color:var(--muted); font-family:'DM Mono',monospace;
+                font-size:12px; letter-spacing:0.1em; text-transform:uppercase;
+                text-decoration:none; border:1px solid var(--border); border-radius:4px;
+                margin-left:16px;">
+        ← back to home
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<!-- IMAGE MODAL -->
+<div id="img-modal">
+  <span id="img-modal-close" onclick="closeModal()">✕  close</span>
+  <div id="img-modal-title"></div>
+  <img id="img-modal-img" src="" alt=""/>
+</div>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Image modal
+  function openModal(src, title) {
+    document.getElementById('img-modal-img').src   = src;
+    document.getElementById('img-modal-title').textContent = title;
+    document.getElementById('img-modal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    document.getElementById('img-modal').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('img-modal').addEventListener('click', e => {
+    if (e.target === document.getElementById('img-modal')) closeModal();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+
+</body>
+</html>

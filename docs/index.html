@@ -1246,58 +1246,17 @@
     </div>
   </div>
 
-  <!-- 4 model comparison — real images -->
-  <p class="section-label reveal" style="margin-bottom:16px;">comparing network models</p>
-  <p class="dyk-desc reveal" style="margin-bottom:24px;">I generated three synthetic networks with the same parameters as mine and compared their topology. Click any card to see the real output.</p>
-
-  <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px;">
-
-    <div class="dyk-card reveal" style="padding:16px; border-color:var(--gold); cursor:zoom-in;" onclick="openNetModal('images/my_network.png','My Film Network','σ = 13.5 · C = 0.776 · L = 3.69 · 509 nodes')">
-      <div style="font-family:'DM Mono',monospace; font-size:9px; color:var(--gold); letter-spacing:0.12em; margin-bottom:8px;">MY NETWORK ↗</div>
-      <img src="images/my_network.png" style="width:100%; border-radius:6px; margin-bottom:8px;" loading="lazy"/>
-      <div style="font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); line-height:1.6;">σ = 13.5 · C = 0.776<br>L = 3.69 · 509 nodes</div>
-      <div style="font-size:11px; color:var(--sub); margin-top:6px;">Dense clusters with bridges — the hallmark of a real taste network.</div>
+  <!-- Teaser linking to network.html -->
+  <div class="dyk-card reveal" style="margin-top:8px; padding:28px; border-color:rgba(232,201,106,0.3); background:rgba(232,201,106,0.04); display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <div style="font-family:'DM Mono',monospace; font-size:10px; color:var(--gold); letter-spacing:0.12em; margin-bottom:6px;">WANT TO GO DEEPER?</div>
+      <div style="font-size:14px; color:var(--sub); max-width:500px;">Full model comparison, Louvain community detection, log-log degree distributions and a complete technical breakdown — all on the dedicated Network Science page.</div>
     </div>
-
-    <div class="dyk-card reveal reveal-delay-1" style="padding:16px; cursor:zoom-in;" onclick="openNetModal('images/erdos_renyi.png','Erdős–Rényi (random)','σ = 1.1 · C = 0.039 · L = 2.42 · random graph')">
-      <div style="font-family:'DM Mono',monospace; font-size:9px; color:#4488ff; letter-spacing:0.12em; margin-bottom:8px;">ERDŐS–RÉNYI ↗</div>
-      <img src="images/erdos_renyi.png" style="width:100%; border-radius:6px; margin-bottom:8px;" loading="lazy"/>
-      <div style="font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); line-height:1.6;">σ = 1.1 · C = 0.039<br>L = 2.42 · random</div>
-      <div style="font-size:11px; color:var(--sub); margin-top:6px;">Every pair connects with equal probability. No clusters, no hubs — pure chance.</div>
-    </div>
-
-    <div class="dyk-card reveal reveal-delay-2" style="padding:16px; cursor:zoom-in;" onclick="openNetModal('images/barabasi.png','Barabási–Albert (scale-free)','σ = 2.9 · C = 0.100 · L = 2.36 · preferential attachment')">
-      <div style="font-family:'DM Mono',monospace; font-size:9px; color:#e84040; letter-spacing:0.12em; margin-bottom:8px;">BARABÁSI–ALBERT ↗</div>
-      <img src="images/barabasi.png" style="width:100%; border-radius:6px; margin-bottom:8px;" loading="lazy"/>
-      <div style="font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); line-height:1.6;">σ = 2.9 · C = 0.100<br>L = 2.36 · scale-free</div>
-      <div style="font-size:11px; color:var(--sub); margin-top:6px;">Rich get richer — new nodes prefer connecting to already popular hubs.</div>
-    </div>
-
-    <div class="dyk-card reveal reveal-delay-3" style="padding:16px; cursor:zoom-in;" onclick="openNetModal('images/watts.png','Watts–Strogatz (small-world)','σ = 11.6 · C = 0.517 · L = 2.87 · rewired ring lattice')">
-      <div style="font-family:'DM Mono',monospace; font-size:9px; color:#00c030; letter-spacing:0.12em; margin-bottom:8px;">WATTS–STROGATZ ↗</div>
-      <img src="images/watts.png" style="width:100%; border-radius:6px; margin-bottom:8px;" loading="lazy"/>
-      <div style="font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); line-height:1.6;">σ = 11.6 · C = 0.517<br>L = 2.87 · small-world</div>
-      <div style="font-size:11px; color:var(--sub); margin-top:6px;">A ring with random shortcuts. High clustering + short paths.</div>
-    </div>
-
+    <a href="network.html" style="flex-shrink:0; margin-left:24px; display:inline-flex; align-items:center; gap:8px; padding:12px 24px; background:var(--gold); color:#0a0a0f; font-family:'DM Mono',monospace; font-size:11px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; text-decoration:none; border-radius:4px; transition:opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+      explore →
+    </a>
   </div>
 </section>
-
-<!-- NETWORK IMAGE MODAL -->
-<div id="net-modal" style="display:none; position:fixed; inset:0; z-index:1000;
-     background:rgba(0,0,0,0.92); align-items:center; justify-content:center;
-     flex-direction:column; padding:24px; gap:16px;">
-  <div style="display:flex; justify-content:space-between; width:100%; max-width:900px; align-items:baseline;">
-    <div>
-      <div style="font-family:'Playfair Display',serif; font-size:20px; color:#e8e8f0;" id="nm-title"></div>
-      <div style="font-family:'DM Mono',monospace; font-size:10px; color:#e8c96a; margin-top:4px;" id="nm-meta"></div>
-    </div>
-    <span onclick="closeNetModal()" style="font-family:'DM Mono',monospace; font-size:12px;
-          color:#666680; cursor:pointer; letter-spacing:0.1em;">✕ close</span>
-  </div>
-  <img id="nm-img" src="" style="max-width:900px; max-height:80vh; width:100%;
-       object-fit:contain; border-radius:8px; border:1px solid #1e1e2e;"/>
-</div>
 
 <div class="divider"></div>
 
@@ -1470,25 +1429,6 @@
 
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closePipeline();
-  });
-</script>
-
-<!-- NETWORK MODAL JS -->
-<script>
-  function openNetModal(src, title, meta) {
-    document.getElementById('nm-img').src   = src;
-    document.getElementById('nm-title').textContent = title;
-    document.getElementById('nm-meta').textContent  = meta;
-    const modal = document.getElementById('net-modal');
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-  }
-  function closeNetModal() {
-    document.getElementById('net-modal').style.display = 'none';
-    document.body.style.overflow = '';
-  }
-  document.getElementById('net-modal').addEventListener('click', e => {
-    if (e.target === document.getElementById('net-modal')) closeNetModal();
   });
 </script>
 
